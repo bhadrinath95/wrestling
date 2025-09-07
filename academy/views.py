@@ -4,6 +4,9 @@ from .forms import BandForm, PlayerForm
 from django.urls import reverse
 
 # ----------------- BAND CRUD -----------------
+def home_view(request):
+    return render(request, 'base.html', {})
+
 def band_list(request):
     bands = Band.objects.all()
     return render(request, 'academy/bands/band_list.html', {'bands': bands})

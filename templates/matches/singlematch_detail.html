@@ -2,7 +2,6 @@
 {% block style %}
 img {
     width: 50%;
-    aspect-ratio: 1 / 1;
     object-fit: cover;
     display: block;
 }
@@ -18,7 +17,7 @@ img {
             {% if match.player_1.image_url %}
             <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_1.image_url }}" 
                             alt="{{ match.player_1.name }}">
-            {{ match.player_1.name }}
+            <h4>{{ match.player_1.name }}</h4>
             {% else %}
             <img alt="{{ match.player_1.name }}">
             {% endif %}
@@ -27,7 +26,7 @@ img {
             {% if match.player_2.image_url %}
             <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_2.image_url }}" 
                             alt="{{ match.player_2.name }}">
-            {{ match.player_2.name }}
+            <h4>{{ match.player_2.name }}</h4>
             {% else %}
             <img alt="{{ match.player_2.name }}">
             {% endif %}
@@ -54,8 +53,8 @@ img {
     <br />
     <div class='row'>
         <table class="table table-bordered">
-            <tr><th>Price Amount</th><td>{{ match.price_amount }}</td></tr>
-            <tr><th>Entry Amount</th><td>{{ match.entry_amount }}</td></tr>
+            <tr><th>Price Amount</th><td>₹ {{ match.price_amount|floatformat:2 }}</td></tr>
+            <tr><th>Entry Amount</th><td>₹ {{ match.entry_amount|floatformat:2 }}</td></tr>
         </table>
     </div>
     <br />
@@ -82,9 +81,11 @@ img {
     <br />
     <div class='row'>
         <p>
-            <a href="{% url 'singlematch_update' match.pk %}" class="btn btn-warning">Edit</a>
-            <a href="{% url 'singlematch_delete' match.pk %}" class="btn btn-danger">Delete</a>
-            <a href="{% url 'singlematch_run' match.pk %}" class="btn btn btn-success btn-sm">Run</a>
+            {% if not match.winner %}
+                <a href="{% url 'singlematch_update' match.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{% url 'singlematch_delete' match.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                <a href="{% url 'singlematch_run' match.pk %}" class="btn btn btn-success btn-sm">Run</a>
+            {% endif %}
             <a href="{% url 'create_notification' match.pk %}" class="btn btn btn-info btn-sm">Notify</a>
             <a href="{% url 'singlematch_list' %}" class="btn btn-secondary btn-sm">Back</a>
         </p>

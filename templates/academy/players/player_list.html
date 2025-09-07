@@ -21,7 +21,7 @@
         <td>{{ player.wins }}</td>
         <td>{{ player.matchesplayed }}</td>
         <td>{{ player.winningpercentage|floatformat:2 }}%</td>
-        <td>{{ player.networth|floatformat:2 }}</td>
+        <td>₹ {{ player.networth|floatformat:2 }}</td>
         <td>{{ player.band.name }}</td>
         <td>
           {% if player and player.spouse %}

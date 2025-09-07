@@ -8,7 +8,7 @@ from django.urls import reverse
 # ---------- SINGLE MATCH VIEWS ----------
 
 def singlematch_list(request):
-    matches = SingleMatch.objects.all()
+    matches = SingleMatch.objects.all().order_by('name')
     return render(request, 'matches/singlematch_list.html', {'matches': matches})
 
 def singlematch_detail(request, pk):

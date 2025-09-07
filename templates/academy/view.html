@@ -18,7 +18,7 @@ img {
             <div class="card-body">
                 {% if instance.image_url %}
                         <div class="text-center mb-3">
-                            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.image_url }}" 
+                            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.image_url }}"
                                 alt="{{ instance.name }}">
                         </div>
                 {% endif %}
@@ -26,23 +26,20 @@ img {
                 {% if instance.player_1 %}
                     <p><strong>Player 1:</strong> {{ instance.player_1 }}</p>
                     <div class="text-center mb-3">
-                        <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.player_1.image_url }}" 
+                        <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.player_1.image_url }}"
                             alt="{{ instance.player_1.name }}">
                     </div>
                 {% endif %}
-                
+
                 {% if instance.player_2 %}
                     <p><strong>Player 2:</strong> {{ instance.player_2 }}</p>
                     <div class="text-center mb-3">
-                        <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.player_2.image_url }}" 
+                        <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.player_2.image_url }}"
                             alt="{{ instance.player_2.name }}">
                     </div>
                 {% endif %}
 
-                {% if instance.gender %}
-                    <p><strong>Gender:</strong> {{ instance.gender }}</p>
-                {% endif %}
-                
+
                 {% if instance.gender %}
                     <p><strong>Gender:</strong> {{ instance.gender }}</p>
                 {% endif %}
@@ -56,19 +53,19 @@ img {
                 {% endif %}
 
                 {% if instance.winningpercentage %}
-                    <p><strong>Winning %:</strong> {{ instance.winningpercentage }}</p>
+                    <p><strong>Winning %:</strong> {{ instance.winningpercentage|floatformat:2 }}</p>
                 {% endif %}
 
                 {% if instance.band %}
                     <p><strong>Band:</strong> {{ instance.band.name }}</p>
                 {% endif %}
-                
+
                 {% if instance.spouse %}
-                    <p><strong>Spouse:</strong>{{ instance.spouse.name }}
+                    <p><strong>Spouse:</strong> {{ instance.spouse.name }}
                 {% endif %}
 
                 {% if instance.networth %}
-                    <p><strong>Networth:</strong> {{ instance.networth }}</p>
+                    <p><strong>Networth:</strong> ₹ {{ instance.networth|floatformat:2 }}</p>
                 {% endif %}
 
                 </p>

@@ -15,7 +15,7 @@
     {% for band in bands %}
     <tr>
       <td>{{ band.name }}</td>
-      <td>{{ band.networth }}</td>
+      <td>₹ {{ band.networth|floatformat:2 }}</td>
       <td>
         <a href="{% url 'band-view' band.id %}" class="btn btn-info btn-sm">View</a>
         <a href="{% url 'band-update' band.id %}" class="btn btn-warning btn-sm">Edit</a>

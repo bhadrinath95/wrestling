@@ -6,7 +6,13 @@ from academy.models import Player
 class SingleMatchForm(forms.ModelForm):
     class Meta:
         model = SingleMatch
-        fields = ['name', 'player_1', 'player_2', 'price_amount', 'entry_amount']
+        fields = ['name', 'player_1', 'player_2', 'date', 'price_amount', 'entry_amount']
+        widgets = {
+            'date': forms.DateInput(attrs={
+                'type': 'date',  # HTML5 date picker
+                'class': 'form-control'
+            }),
+        }
 
     player_1 = forms.ModelChoiceField(
         queryset=Player.objects.all(),

@@ -8,7 +8,7 @@ def home_view(request):
     return render(request, 'base.html', {})
 
 def band_list(request):
-    bands = Band.objects.all()
+    bands = Band.objects.all().order_by('name')
     return render(request, 'academy/bands/band_list.html', {'bands': bands})
 
 def band_create(request):
@@ -44,7 +44,7 @@ def band_delete(request, pk):
 
 # ----------------- PLAYER CRUD -----------------
 def player_list(request):
-    players = Player.objects.all()
+    players = Player.objects.all().order_by('name')
     return render(request, 'academy/players/player_list.html', {'players': players})
 
 def player_create(request):

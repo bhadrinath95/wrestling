@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block style %}
+img {
+    width: 50%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+{% endblock %}
+{% block content %}
+<div class="container mt-3">
+    <div class='row'>
+        <h2>{{ match.name }}</h2>
+    </div>
+    <br />
+    <div class='row'>
+        <div class="col-6 col-md-6">
+            {% if match.player_1.image_url %}
+            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_1.image_url }}" 
+                            alt="{{ match.player_1.name }}">
+            {{ match.player_1.name }}
+            {% else %}
+            <img alt="{{ match.player_1.name }}">
+            {% endif %}
+        </div>
+        <div class="col-6 col-md-6">
+            {% if match.player_2.image_url %}
+            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_2.image_url }}" 
+                            alt="{{ match.player_2.name }}">
+            {{ match.player_2.name }}
+            {% else %}
+            <img alt="{{ match.player_2.name }}">
+            {% endif %}
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3>Winner</h3>
+            </div>
+            <div class="card-body">
+                {% if match.winner %}
+                    <div class="text-center mb-3">
+                        <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.winner.image_url }}" 
+                            alt="{{ match.winner.name }}">
+                    </div>
+                {% else %}
+                    Not yet declared.
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class='row'>
+        <table class="table table-bordered">
+            <tr><th>Price Amount</th><td>{{ match.price_amount }}</td></tr>
+            <tr><th>Entry Amount</th><td>{{ match.entry_amount }}</td></tr>
+        </table>
+    </div>
+    <br />
+    {% if notifications %}
+        <div class="row row-cols-1 g-3">
+        {% for note in notifications %}
+            <div class="col">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                <p class="card-text">{{ note.content|linebreaksbr }}</p>
+                <p class="text-muted small mb-0">
+                    {{ note.timestamp|date:"M d, Y H:i" }}
+                </p>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+        No notifications yet.
+        </div>
+    {% endif %}
+    <br />
+    <div class='row'>
+        <p>
+            <a href="{% url 'singlematch_update' match.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'singlematch_delete' match.pk %}" class="btn btn-danger">Delete</a>
+            <a href="{% url 'singlematch_run' match.pk %}" class="btn btn btn-success btn-sm">Run</a>
+            <a href="{% url 'create_notification' match.pk %}" class="btn btn btn-info btn-sm">Notify</a>
+            <a href="{% url 'singlematch_list' %}" class="btn btn-secondary btn-sm">Back</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

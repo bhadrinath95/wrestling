@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Bands{% endblock %}
+{% block content %}
+<h2 class="mb-3">Bands</h2>
+<a href="{% url 'band-create' %}" class="btn btn-primary mb-3">Add Band</a>
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Net Worth</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for band in bands %}
+    <tr>
+      <td>{{ band.name }}</td>
+      <td>{{ band.networth }}</td>
+      <td>
+        <a href="{% url 'band-view' band.id %}" class="btn btn-info btn-sm">View</a>
+        <a href="{% url 'band-update' band.id %}" class="btn btn-warning btn-sm">Edit</a>
+        <a href="{% url 'band-delete' band.id %}" class="btn btn-danger btn-sm">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

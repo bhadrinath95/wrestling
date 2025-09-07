@@ -3,6 +3,7 @@
 {% block content %}
 <h2 class="mb-3">Bands</h2>
 <a href="{% url 'band-create' %}" class="btn btn-primary mb-3">Add Band</a>
+<div class="table-responsive">
 <table class="table table-bordered table-striped">
   <thead class="table-dark">
     <tr>
@@ -25,4 +26,5 @@
     {% endfor %}
   </tbody>
 </table>
+</div>
 {% endblock %}

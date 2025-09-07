@@ -4,13 +4,15 @@ from .forms import SingleMatchForm, NotificationForm
 from django.urls import reverse_lazy
 import random
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 # ---------- SINGLE MATCH VIEWS ----------
-
+@login_required
 def singlematch_list(request):
     matches = SingleMatch.objects.all().order_by('name')
     return render(request, 'matches/singlematch_list.html', {'matches': matches})
 
+@login_required
 def singlematch_detail(request, pk):
     match = get_object_or_404(SingleMatch, pk=pk)
     notifications = match.match_notification.all().order_by("timestamp")
@@ -24,6 +26,7 @@ def singlematch_detail(request, pk):
         }
     )
 
+@login_required
 def singlematch_create(request):
     form_name = "Create Single Match"
     if request.method == 'POST':
@@ -35,6 +38,7 @@ def singlematch_create(request):
         form = SingleMatchForm()
     return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('singlematch_list'), })
 
+@login_required
 def singlematch_update(request, pk):
     form_name = "Update Single Match"
     match = get_object_or_404(SingleMatch, pk=pk)
@@ -47,6 +51,7 @@ def singlematch_update(request, pk):
         form = SingleMatchForm(instance=match)
     return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('singlematch_list'), })
 
+@login_required
 def singlematch_delete(request, pk):
     instance = get_object_or_404(SingleMatch, pk=pk)
     if request.method == 'POST':
@@ -54,6 +59,7 @@ def singlematch_delete(request, pk):
         return redirect('singlematch_list')
     return render(request, 'confirm_delete.html', {'instance': instance, 'reverse_url': reverse('singlematch_list')})
 
+@login_required
 def singlematch_execute(request, pk):
     match = get_object_or_404(SingleMatch, pk=pk)
 
@@ -115,6 +121,7 @@ def singlematch_execute(request, pk):
 
     return redirect('singlematch_list')
 
+@login_required
 def create_notification(request, pk):
     form_name = "Create Notification"
     match = get_object_or_404(SingleMatch, pk=pk)

@@ -16,12 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from academy.views import home_view
+from academy.views import home_view, custom_404_view
+from accounts.views import (
+    login_view,
+    logout_view,
+    register_view
+)
+
+handler404 = 'academy.views.custom_404_view'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('match/', include('match.urls')),
     path('academy/', include('academy.urls')),
-    path('', home_view, name='home')
-    
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('register/', register_view, name='register'),
+    path('', home_view, name='home')   
 ]
+
+

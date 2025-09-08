@@ -19,10 +19,6 @@ class Band(models.Model):
         return self.player_band.filter(gender='Female').count()
     
     @property
-    def others_count(self):
-        return self.player_band.filter(gender='Others').count()
-    
-    @property
     def player_count(self):
         return self.player_band.count()
     
@@ -44,7 +40,6 @@ class Player(models.Model):
     GENDER_CHOICES = [
         ('Male', 'Male'),
         ('Female', 'Female'),
-        ('Others', 'Others'),
     ]
 
     name = models.CharField(max_length=200)

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Band, Player, Championship
-from .forms import BandForm, PlayerForm, ChampionshipForm, BandFilterForm
+from .forms import BandForm, PlayerForm, ChampionshipForm, PlayerFilterForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
@@ -51,13 +51,18 @@ def band_delete(request, pk):
 
 @login_required
 def player_list(request):
-    form = BandFilterForm(request.GET or None)
+    form = PlayerFilterForm(request.GET or None)
 
     players = Player.objects.all().order_by("name")
+
     if form.is_valid():
         band = form.cleaned_data.get("band")
+        gender = form.cleaned_data.get("gender")
+
         if band:
             players = players.filter(band=band)
+        if gender:
+            players = players.filter(gender=gender)
 
     return render(
         request,

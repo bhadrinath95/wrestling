@@ -5,9 +5,14 @@
   <a href="{% url 'player-create' %}" class="btn btn-success">+ Add Player</a>
 </div>
 <div class="row">
-  <form method="GET" class="mb-3">
-    {{ form.band }}
-  </form>
+  <form method="get" class="row mb-3">
+    <div class="col-md-3">
+      {{ form.band }}
+    </div>
+    <div class="col-md-3">
+      {{ form.gender }}
+    </div>
+</form>
 </div>
 <div class="table-responsive">
 <table class="table table-hover table-bordered">

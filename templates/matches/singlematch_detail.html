@@ -20,6 +20,7 @@ img {
             <h4>{{ match.player_1.name }}</h4>
             {% else %}
             <img alt="{{ match.player_1.name }}">
+            <h4>{{ instance.player.name }}</h4>
             {% endif %}
         </div>
         <div class="col-6 col-md-6">
@@ -53,6 +54,7 @@ img {
     <br />
     <div class='row'>
         <table class="table table-bordered">
+            <tr><th>Date</th><td>₹ {{ match.date }}</td></tr>
             <tr><th>Price Amount</th><td>₹ {{ match.price_amount|floatformat:2 }}</td></tr>
             <tr><th>Entry Amount</th><td>₹ {{ match.entry_amount|floatformat:2 }}</td></tr>
         </table>

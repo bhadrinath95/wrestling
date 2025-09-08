@@ -1,5 +1,5 @@
 from django import forms
-from .models import Band, Player
+from .models import Band, Player, Championship
 
 class BandForm(forms.ModelForm):
     class Meta:
@@ -9,4 +9,9 @@ class BandForm(forms.ModelForm):
 class PlayerForm(forms.ModelForm):
     class Meta:
         model = Player
+        fields = '__all__'
+
+class ChampionshipForm(forms.ModelForm):
+    class Meta:
+        model = Championship
         fields = '__all__'

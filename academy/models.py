@@ -49,3 +49,9 @@ def player_post_save(sender, instance, *args, **kwargs):
 
 pre_save.connect(object_pre_save, sender=Player) 
 post_save.connect(player_post_save, sender=Player)
+
+class Championship(models.Model):
+    name = models.CharField(max_length=200)
+    player = models.OneToOneField(Player, on_delete=models.CASCADE, null=True, blank=True)
+    image_url = models.CharField(max_length=120, null=True, blank=True)
+    hike = models.FloatField()

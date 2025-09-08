@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Band, Player
-from .forms import BandForm, PlayerForm
+from .models import Band, Player, Championship
+from .forms import BandForm, PlayerForm, ChampionshipForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
@@ -96,3 +96,46 @@ def band_view(request, pk):
 def player_view(request, pk):
     instance = get_object_or_404(Player, pk=pk)
     return render(request, 'academy/view.html', {'instance': instance})
+
+@login_required
+def championship_detail(request, pk):
+    instance = get_object_or_404(Championship, pk=pk)
+    return render(request, 'academy/championship/championship_detail.html', {'instance': instance})
+
+@login_required
+def championship_list(request):
+    championships = Championship.objects.all().order_by('name')
+    return render(request, 'academy/championship/championship_list.html', {'championships': championships})
+
+@login_required
+def championship_create(request):
+    form_name = "Create Championship"
+    if request.method == "POST":
+        form = ChampionshipForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('championship-list')
+    else:
+        form = ChampionshipForm()
+    return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('championship-list'), })
+
+@login_required
+def championship_update(request, pk):
+    form_name = "Update Championship"
+    instance = get_object_or_404(Championship, pk=pk)
+    if request.method == "POST":
+        form = ChampionshipForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect('championship-list')
+    else:
+        form = ChampionshipForm(instance=instance)
+    return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('championship-list'), })
+
+@login_required
+def championship_delete(request, pk):
+    instance = get_object_or_404(Championship, pk=pk)
+    if request.method == "POST":
+        instance.delete()
+        return redirect('championship-list')
+    return render(request, 'confirm_delete.html', {'instance': instance, 'reverse_url': reverse('championship-list')})

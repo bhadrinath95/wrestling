@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 import random
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from academy.models import Championship
 
 # ---------- SINGLE MATCH VIEWS ----------
 @login_required
@@ -102,7 +103,12 @@ def singlematch_execute(request, pk):
         match.winner = winner
         match.save()
 
-        winner.networth = winner.networth + (match.price_amount * 2/3)
+        championship_obj = Championship.objects.filter(player=winner)
+        price_amount = (match.price_amount * 2/3)
+        if championship_obj:
+            price_amount += price_amount * championship_obj.hike
+
+        winner.networth = winner.networth + price_amount
         winner.matchesplayed += 1
         winner.wins += 1
         winner.save()

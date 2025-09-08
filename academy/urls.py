@@ -16,4 +16,11 @@ urlpatterns = [
     path('players/<int:pk>/edit/', views.player_update, name='player-update'),
     path('players/<int:pk>/delete/', views.player_delete, name='player-delete'),
 
+    # Championship
+    path('championship/', views.championship_list, name='championship-list'),
+    path('championship/create/', views.championship_create, name='championship-create'),
+    path('championship/<int:pk>/view/', views.championship_detail, name='championship-view'),
+    path('championship/<int:pk>/edit/', views.championship_update, name='championship-update'),
+    path('championship/<int:pk>/delete/', views.championship_delete, name='championship-delete'),
+
 ]

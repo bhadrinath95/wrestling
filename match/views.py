@@ -6,11 +6,22 @@ from .utils import generate_winner
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from academy.models import Championship
+from django.db.models import Case, When, Value, IntegerField
 
 # ---------- SINGLE MATCH VIEWS ----------
 @login_required
 def singlematch_list(request):
-    matches = SingleMatch.objects.all().order_by('name')
+    matches = (
+        SingleMatch.objects
+        .annotate(
+            is_unfinished=Case(
+                When(winner__isnull=True, then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField(),
+            )
+        )
+        .order_by("is_unfinished", "name")  # unfinished first, then sort by name
+    )
     return render(request, 'matches/singlematch_list.html', {'matches': matches})
 
 @login_required

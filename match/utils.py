@@ -38,10 +38,13 @@ def generate_winner(match):
         match.winner = winner
         match.save()
 
-        championship_obj = Championship.objects.filter(player=winner)
+        
         price_amount = (match.price_amount * 2/3)
-        if championship_obj:
+        try:
+            championship_obj = Championship.objects.get(player=winner)
             price_amount += price_amount * championship_obj.hike
+        except Championship.DoesNotExist:
+            pass
 
         winner.networth = winner.networth + price_amount
         winner.matchesplayed += 1

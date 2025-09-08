@@ -10,13 +10,13 @@ def create_league_matches():
     count = 1
 
     for band in bands:
-        for gender in ['Male', 'Female']:
+        for gender in ['Female']:
             players = Player.objects.filter(band=band, gender=gender)
 
             # Generate all unique matchups
             for p1, p2 in combinations(players, 2):
                 SingleMatch.objects.create(
-                    name=f"BWE Championship {band} Stage Match: {count}",
+                    name=f"BWE Female Championship Sept'25 {band} Stage Match: {count}",
                     date=match_date,
                     player_1=p1,
                     player_2=p2,
@@ -26,8 +26,22 @@ def create_league_matches():
                 )
                 count += 1
 
-def complate_all_matches():
+def complete_all_matches():
     matches = SingleMatch.objects.filter(winner=None)
     for match in matches:
         generate_winner(match)
     return
+
+def add_certain_amount_to_players():
+    amount = 1000
+    players = Player.objects.all()
+    for player in players:
+        player.networth += amount
+        player.save()
+
+def add_certain_amount_to_bands():
+    amount = 10000
+    bands = Band.objects.all()
+    for band in bands:
+        band.networth += amount
+        band.save()

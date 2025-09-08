@@ -20,7 +20,7 @@ def singlematch_list(request):
                 output_field=IntegerField(),
             )
         )
-        .order_by("is_unfinished", "name")  # unfinished first, then sort by name
+        .order_by("is_unfinished", "-updated_at")  # unfinished first, then sort by name
     )
     return render(request, 'matches/singlematch_list.html', {'matches': matches})
 

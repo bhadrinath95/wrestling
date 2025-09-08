@@ -12,6 +12,7 @@ class SingleMatch(models.Model):
     winner = models.ForeignKey(Player, on_delete=models.SET_NULL, null=True, blank=True, related_name="single_match_winner")
     price_amount = models.FloatField(default=0)
     entry_amount = models.FloatField(default=0)
+    updated_at = models.DateTimeField(auto_now=True) 
 
     def __str__(self):
         return f"{self.name} - {self.player_1} vs {self.player_2}"

@@ -58,11 +58,16 @@ def player_list(request):
     if form.is_valid():
         band = form.cleaned_data.get("band")
         gender = form.cleaned_data.get("gender")
+        sort_by = form.cleaned_data.get("sort_by")
 
         if band:
             players = players.filter(band=band)
         if gender:
             players = players.filter(gender=gender)
+        if sort_by:
+            players = players.order_by(sort_by)
+        else:
+            players = players.order_by("name")
 
     return render(
         request,
@@ -79,11 +84,16 @@ def player_images(request):
     if form.is_valid():
         band = form.cleaned_data.get("band")
         gender = form.cleaned_data.get("gender")
+        sort_by = form.cleaned_data.get("sort_by")
 
         if band:
             players = players.filter(band=band)
         if gender:
             players = players.filter(gender=gender)
+        if sort_by:
+            players = players.order_by(sort_by)
+        else:
+            players = players.order_by("name")
 
     return render(
         request,

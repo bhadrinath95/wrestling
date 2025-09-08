@@ -2,6 +2,7 @@ from itertools import combinations
 import datetime
 from academy.models import Band, Player
 from match.models import SingleMatch
+from match.utils import generate_winner
 
 def create_league_matches():
     match_date = datetime.datetime(datetime.date.today().year, datetime.date.today().month, 30)
@@ -24,3 +25,9 @@ def create_league_matches():
                     entry_amount=50
                 )
                 count += 1
+
+def complate_all_matches():
+    matches = SingleMatch.objects.filter(winner=None)
+    for match in matches:
+        generate_winner(match)
+    return

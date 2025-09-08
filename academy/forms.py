@@ -29,3 +29,21 @@ class PlayerFilterForm(forms.Form):
         required=False,
         widget=forms.Select(attrs={"class": "form-select", "onchange": "this.form.submit();"})
     )
+
+    sort_by = forms.ChoiceField(
+        choices=[
+            ("", "Default (Name)"),
+            ("name", "Name (A-Z)"),
+            ("-name", "Name (Z-A)"),
+            ("wins", "Wins (Low → High)"),
+            ("-wins", "Wins (High → Low)"),
+             ("winningpercentage", "Win % (Low → High)"),
+            ("-winningpercentage", "Win % (High → Low)"),
+            ("matchesplayed", "Matches (Low → High)"),
+            ("-matchesplayed", "Matches (High → Low)"),
+            ("networth", "Networth (Low → High)"),
+            ("-networth", "Networth (High → Low)"),
+        ],
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "this.form.submit();"})
+    )

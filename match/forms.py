@@ -15,13 +15,13 @@ class SingleMatchForm(forms.ModelForm):
         }
 
     player_1 = forms.ModelChoiceField(
-        queryset=Player.objects.all(),
+        queryset=Player.objects.all().order_by("name"),
         widget=forms.Select(attrs={'class': 'form-select'}),
         label="Player 1"
     )
 
     player_2 = forms.ModelChoiceField(
-        queryset=Player.objects.all(),
+        queryset=Player.objects.all().order_by("name"),
         widget=forms.Select(attrs={'class': 'form-select'}),
         label="Player 2"
     )

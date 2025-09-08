@@ -26,6 +26,7 @@ img {
             {% endif %}
             {% if instance.updated_on %}
                 <p><strong>Holding From:</strong> {{ instance.updated_on|date:"d-m-Y" }}</p>
+                <p><strong>Holding Duration:</strong> {{ instance.updated_on|timesince }}</p>
             {% endif %}
         </div>
         <div class="col-6 col-md-6">

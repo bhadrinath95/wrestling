@@ -68,6 +68,10 @@ img {
                     <p><strong>Networth:</strong> ₹ {{ instance.networth|floatformat:2 }}</p>
                 {% endif %}
 
+                {% if instance.player_count %}
+                    <p><strong>Player Count:</strong> ₹ {{ instance.player_count }}</p>
+                {% endif %}
+
                 </p>
             </div>
         </div>

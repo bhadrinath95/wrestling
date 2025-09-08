@@ -9,6 +9,10 @@ class Band(models.Model):
 
     def __str__(self):
         return self.name
+    
+    @property
+    def player_count(self):
+        return self.player_band.count()
 
 class Player(models.Model):
     GENDER_CHOICES = [

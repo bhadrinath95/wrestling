@@ -80,3 +80,4 @@ class Championship(models.Model):
     player = models.OneToOneField(Player, on_delete=models.CASCADE, null=True, blank=True)
     image_url = models.CharField(max_length=120, null=True, blank=True)
     hike = models.FloatField()
+    updated_on = models.DateTimeField(auto_now=True) 

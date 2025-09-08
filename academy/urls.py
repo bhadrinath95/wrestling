@@ -11,6 +11,7 @@ urlpatterns = [
 
     # Players
     path('players/', views.player_list, name='player-list'),
+    path('players/images/', views.player_images, name='player-image'),
     path('players/create/', views.player_create, name='player-create'),
     path('players/<int:pk>/view/', views.player_view, name='player-view'),
     path('players/<int:pk>/edit/', views.player_update, name='player-update'),

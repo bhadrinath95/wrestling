@@ -71,6 +71,27 @@ def player_list(request):
     )
 
 @login_required
+def player_images(request):
+    form = PlayerFilterForm(request.GET or None)
+
+    players = Player.objects.all().order_by("name")
+
+    if form.is_valid():
+        band = form.cleaned_data.get("band")
+        gender = form.cleaned_data.get("gender")
+
+        if band:
+            players = players.filter(band=band)
+        if gender:
+            players = players.filter(gender=gender)
+
+    return render(
+        request,
+        "academy/players/player_image.html",
+        {"players": players, "form": form},
+    )
+
+@login_required
 def player_create(request):
     form_name = "Create Player"
     if request.method == "POST":

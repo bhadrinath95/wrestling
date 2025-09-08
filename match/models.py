@@ -20,6 +20,7 @@ class Notification(models.Model):
     match = models.ForeignKey(SingleMatch, on_delete=models.CASCADE, related_name="match_notification")
 
     content = models.TextField()
+    image_url = models.CharField(max_length=120, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now=False,auto_now_add=True)
 
     def __str__(self):

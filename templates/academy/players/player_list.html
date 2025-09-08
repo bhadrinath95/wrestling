@@ -4,7 +4,11 @@
   <h2>Players</h2>
   <a href="{% url 'player-create' %}" class="btn btn-success">+ Add Player</a>
 </div>
-
+<div class="row">
+  <form method="GET" class="mb-3">
+    {{ form.band }}
+  </form>
+</div>
 <div class="table-responsive">
 <table class="table table-hover table-bordered">
   <thead class="table-dark">

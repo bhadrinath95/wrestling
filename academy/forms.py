@@ -15,3 +15,11 @@ class ChampionshipForm(forms.ModelForm):
     class Meta:
         model = Championship
         fields = '__all__'
+
+class BandFilterForm(forms.Form):
+    band = forms.ModelChoiceField(
+        queryset=Band.objects.all(),
+        required=False,
+        empty_label="All Bands",
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "this.form.submit();"})
+    )

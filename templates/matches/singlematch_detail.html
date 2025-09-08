@@ -66,6 +66,10 @@ img {
             <div class="col">
             <div class="card shadow-sm">
                 <div class="card-body">
+                {% if note.image_url %}
+                    <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ note.image_url }}" 
+                            alt="{{ note.image_url }}" class="img-fluid rounded mb-2">
+                {% endif %}
                 <p class="card-text">{{ note.content|linebreaksbr }}</p>
                 <p class="text-muted small mb-0">
                     {{ note.timestamp|date:"M d, Y H:i" }}

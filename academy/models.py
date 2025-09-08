@@ -11,8 +11,34 @@ class Band(models.Model):
         return self.name
     
     @property
+    def men_count(self):
+        return self.player_band.filter(gender='Male').count()
+    
+    @property
+    def women_count(self):
+        return self.player_band.filter(gender='Female').count()
+    
+    @property
+    def others_count(self):
+        return self.player_band.filter(gender='Others').count()
+    
+    @property
     def player_count(self):
         return self.player_band.count()
+    
+    @property
+    def matchesplayed(self):
+        return self.player_band.aggregate(total=models.Sum('matchesplayed'))['total'] or 0
+    
+    @property
+    def wins(self):
+        return self.player_band.aggregate(total=models.Sum('wins'))['total'] or 0
+    
+    @property
+    def winningpercentage(self):
+        matches = self.matchesplayed
+        wins = self.wins
+        return round((wins / matches) * 100, 2) if matches > 0 else 0
 
 class Player(models.Model):
     GENDER_CHOICES = [

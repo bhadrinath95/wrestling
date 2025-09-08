@@ -68,8 +68,20 @@ img {
                     <p><strong>Networth:</strong> ₹ {{ instance.networth|floatformat:2 }}</p>
                 {% endif %}
 
+                {% if instance.men_count %}
+                    <p><strong>Men Player Count:</strong> {{ instance.men_count }}</p>
+                {% endif %}
+
+                {% if instance.women_count %}
+                    <p><strong>Women Player Count:</strong> {{ instance.women_count }}</p>
+                {% endif %}
+
+                {% if instance.others_count %}
+                    <p><strong>Other Gender Player Count:</strong> {{ instance.others_count }}</p>
+                {% endif %}
+
                 {% if instance.player_count %}
-                    <p><strong>Player Count:</strong> ₹ {{ instance.player_count }}</p>
+                    <p><strong>Player Count:</strong> {{ instance.player_count }}</p>
                 {% endif %}
 
                 </p>

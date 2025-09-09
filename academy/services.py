@@ -3,6 +3,9 @@ import datetime
 from academy.models import Band, Player
 from match.models import SingleMatch
 from match.utils import generate_winner
+import random
+from datetime import date
+
 
 def create_league_matches():
     # ["Green Bands", "Hand Bands", "Red Bands", "White Bands", "Yellow Bands"]
@@ -54,3 +57,32 @@ def add_certain_amount_to_bands():
     for band in bands:
         band.networth += AMOUNT
         band.save()
+
+def create_n_matches(match_count, price_amount, entry_amount):
+    players_max_count = match_count * 2
+    today = date.today()
+    day_name = today.strftime("%A") 
+    GENDER_LIST = ["Female", "Male"]
+    EXCLUDE_BANDS = ["NXT Generations Band"]
+
+    for gender in GENDER_LIST:
+        players = Player.objects.filter(gender=gender).exclude(band__name__in=EXCLUDE_BANDS)
+        count = players.count()
+        random_indices = random.sample(range(count), players_max_count)
+        random_players = [players[i] for i in random_indices]
+
+        i = 0
+        for match_index in range(match_count):
+            first_player = random_players[i]
+            i += 1
+            second_player = random_players[i]
+            i += 1
+            SingleMatch.objects.create(
+                        name=f"{day_name} {gender} Random Match: {(match_index+1)}",
+                        date=today,
+                        player_1=first_player,
+                        player_2=second_player,
+                        winner=None,
+                        price_amount=price_amount,
+                        entry_amount=entry_amount
+                    )

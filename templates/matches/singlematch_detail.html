@@ -17,20 +17,29 @@ img {
             {% if match.player_1.image_url %}
             <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_1.image_url }}" 
                             alt="{{ match.player_1.name }}">
-            <h4>{{ match.player_1.name }}</h4>
             {% else %}
             <img alt="{{ match.player_1.name }}">
-            <h4>{{ instance.player.name }}</h4>
             {% endif %}
+            <h4>{{ match.player_1.name }}</h4>
+            <ul>
+                <li><strong>Band: </strong>{{ match.player_1.band }} %</li>
+                <li><strong>Win %: </strong>{{ match.player_1.winningpercentage }} %</li>
+                <li><strong>Net Worth: </strong>₹ {{ match.player_1.networth|floatformat:2 }}</li>
+            </ul>
         </div>
         <div class="col-6 col-md-6">
             {% if match.player_2.image_url %}
             <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_2.image_url }}" 
                             alt="{{ match.player_2.name }}">
-            <h4>{{ match.player_2.name }}</h4>
             {% else %}
             <img alt="{{ match.player_2.name }}">
             {% endif %}
+            <h4>{{ match.player_2.name }}</h4>
+            <ul>
+                <li><strong>Band: </strong>{{ match.player_2.band }} %</li>
+                <li><strong>Win %: </strong>{{ match.player_2.winningpercentage }} %</li>
+                <li><strong>Net Worth: </strong>₹ {{ match.player_2.networth|floatformat:2 }}</li>
+            </ul>
         </div>
     </div>
     <br />

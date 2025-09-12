@@ -2,7 +2,9 @@
 {% block style %}
 img {
     width: 50%;
-    object-fit: cover;
+    height: 50%;
+    object-fit: contain;
+    object-position: center; 
     display: block;
 }
 {% endblock %}
@@ -15,29 +17,38 @@ img {
     <div class='row'>
         <div class="col-6 col-md-6">
             {% if match.player_1.image_url %}
-            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_1.image_url }}" 
-                            alt="{{ match.player_1.name }}">
+            <img
+                src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_1.image_url }}"
+                alt="{{ match.player_1.name }}"
+                >
             {% else %}
             <img alt="{{ match.player_1.name }}">
             {% endif %}
-            <h4>{{ match.player_1.name }}</h4>
+            <h4>
+                <a href="{% url 'player-view' match.player_1.id %}">{{ match.player_1.name }}</a>{% if match.player_1.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_1.championship.name }}</span>{% endif %}
+            </h4>
             <ul>
                 <li><strong>Band: </strong>{{ match.player_1.band }} %</li>
-                <li><strong>Win %: </strong>{{ match.player_1.winningpercentage }} %</li>
+                <li><strong>Win %: </strong>{{ match.player_1.winningpercentage|floatformat:2 }} %</li>
                 <li><strong>Net Worth: </strong>₹ {{ match.player_1.networth|floatformat:2 }}</li>
             </ul>
         </div>
         <div class="col-6 col-md-6">
             {% if match.player_2.image_url %}
-            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_2.image_url }}" 
-                            alt="{{ match.player_2.name }}">
+            <img
+                src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_2.image_url }}"
+                alt="{{ match.player_2.name }}"
+                >
             {% else %}
             <img alt="{{ match.player_2.name }}">
             {% endif %}
-            <h4>{{ match.player_2.name }}</h4>
+            <h4>
+                <a href="{% url 'player-view' match.player_2.id %}">{{ match.player_2.name }}</a>{% if match.player_2.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_2.championship.name }}</span>{% endif %}
+            </h4>
+            
             <ul>
                 <li><strong>Band: </strong>{{ match.player_2.band }} %</li>
-                <li><strong>Win %: </strong>{{ match.player_2.winningpercentage }} %</li>
+                <li><strong>Win %: </strong>{{ match.player_2.winningpercentage|floatformat:2 }} %</li>
                 <li><strong>Net Worth: </strong>₹ {{ match.player_2.networth|floatformat:2 }}</li>
             </ul>
         </div>
@@ -51,7 +62,7 @@ img {
             <div class="card-body">
                 {% if match.winner %}
                     <div class="text-center mb-3">
-                        <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.winner.image_url }}" 
+                        <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.winner.image_url }}"
                             alt="{{ match.winner.name }}">
                     </div>
                 {% else %}
@@ -76,7 +87,7 @@ img {
             <div class="card shadow-sm">
                 <div class="card-body">
                 {% if note.image_url %}
-                    <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ note.image_url }}" 
+                    <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ note.image_url }}"
                             alt="{{ note.image_url }}" class="img-fluid rounded mb-2">
                 {% endif %}
                 <p class="card-text">{{ note.content|linebreaksbr }}</p>

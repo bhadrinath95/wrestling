@@ -13,10 +13,10 @@ def create_league_matches():
     # ["Female", "Male"]
     INCLUDE_BANDS = ["NXT Generations Band"]
     GENDER_LIST = ["Male"]
-    PRICE_AMOUNT = 200
-    ENTRY_AMOUNT = 100
-    MATCH_NAME = "NXT Championship Sept'25"
-    
+    PRICE_AMOUNT = 500
+    ENTRY_AMOUNT = 250
+    MATCH_NAME = "Thursday Male Random"
+
     match_date = datetime.datetime(datetime.date.today().year, datetime.date.today().month, 30)
     bands = Band.objects.filter(name__in=INCLUDE_BANDS)
     count = 1
@@ -61,7 +61,7 @@ def add_certain_amount_to_bands():
 def create_n_matches(match_count, price_amount, entry_amount):
     players_max_count = match_count * 2
     today = date.today()
-    day_name = today.strftime("%A") 
+    day_name = today.strftime("%A")
     GENDER_LIST = ["Female", "Male"]
     EXCLUDE_BANDS = ["NXT Generations Band"]
 

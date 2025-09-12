@@ -62,7 +62,7 @@ def tournament_create_league(request, pk):
                     players = Player.objects.filter(band=band, gender=gender)
                 for p1, p2 in combinations(players, 2):
                     SingleMatch.objects.create(
-                        name=f"{tournament.name} {band.name} Stage Match: {count}",
+                        name=f"{band.name} Stage Match: {count}",
                         date=match_date,
                         tournament=tournament,
                         player_1=p1,

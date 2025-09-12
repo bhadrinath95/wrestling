@@ -44,14 +44,14 @@
             <div class="card-body text-center">
               <h6 class="card-title mb-1">{{ player.name }}</h6>
               <p class="card-text text-muted small mb-0">
-                {% if player.band %}{{ player.band }}{% endif %}<br />
-                <b>Win %:</b> {{ player.winningpercentage|floatformat:2 }}%<br />
-                <b>Networth:</b> ₹ {{ player.networth|floatformat:2 }}<br />
                 {% if player.championship %}
                   <span class="badge bg-warning text-dark mt-1">
                     {{ player.championship.name }}
-                  </span>
+                  </span><br />
                 {% endif %}
+                {% if player.band %}{{ player.band }}{% endif %}<br />
+                <b>Win %:</b> {{ player.winningpercentage|floatformat:2 }}%<br />
+                <b>Networth:</b> ₹ {{ player.networth|floatformat:2 }}<br />
               </p>
             </div>
           </div>

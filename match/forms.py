@@ -17,7 +17,7 @@ class SingleMatchForm(forms.ModelForm):
         }
 
     tournament = forms.ModelChoiceField(
-        queryset=Tournament.objects.all().order_by("-date"),
+        queryset=Tournament.objects.all().order_by("-updated_at"),
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 

@@ -14,14 +14,14 @@ from itertools import combinations
 # ---------- TOURNAMENT MATCH VIEWS ----------
 @login_required
 def tournament_list(request):
-    tournaments = Tournament.objects.all()
+    tournaments = Tournament.objects.all().order_by("-updated_at")
     return render(request, 'matches/tournament_list.html', {'tournaments': tournaments})
 
 @login_required
 def tournament_detail(request, pk):
     tournament = get_object_or_404(Tournament, pk=pk)
 
-    matches = SingleMatch.objects.all().order_by("updated_at")
+    matches = SingleMatch.objects.all().order_by("-updated_at")
     matches = matches.filter(tournament=tournament)
 
 

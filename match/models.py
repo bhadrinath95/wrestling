@@ -8,6 +8,7 @@ from django.db.models import Q
 class Tournament(models.Model):
     name = models.CharField(max_length=200)
     date = models.DateField()
+    updated_at = models.DateTimeField(auto_now=True) 
 
     def __str__(self):
         return self.name

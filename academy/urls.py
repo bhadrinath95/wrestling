@@ -24,4 +24,10 @@ urlpatterns = [
     path('championship/<int:pk>/edit/', views.championship_update, name='championship-update'),
     path('championship/<int:pk>/delete/', views.championship_delete, name='championship-delete'),
 
+    # Rules
+    path('rule/', views.rule_list, name='rule-list'),
+    path('rule/create/', views.rule_create, name='rule-create'),
+    path('rule/<int:pk>/view/', views.rule_view, name='rule-view'),
+    path('rule/<int:pk>/edit/', views.rule_update, name='rule-update'),
+    path('rule/<int:pk>/delete/', views.rule_delete, name='rule-delete'),
 ]

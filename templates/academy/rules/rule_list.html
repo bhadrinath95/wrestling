@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Rules{% endblock %}
+{% block content %}
+<h2 class="mb-3">Rules</h2>
+<a href="{% url 'rule-create' %}" class="btn btn-primary mb-3">Add Rule</a>
+<div class="table-responsive">
+<div id="dialog"></div>
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="table-body">
+    {% include "academy/rules/partials/table_body.html" %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

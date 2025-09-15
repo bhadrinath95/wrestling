@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Band, Player, Championship
-from .forms import BandForm, PlayerForm, ChampionshipForm, PlayerFilterForm
+from .models import Band, Player, Championship, Rule
+from .forms import BandForm, PlayerForm, ChampionshipForm, PlayerFilterForm, RuleForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
@@ -196,3 +196,53 @@ def championship_delete(request, pk):
         "partials/confirm_delete.html",
         {"instance": instance, "reverse_url": reverse("championship-list"), "delete_view_name": "championship-delete"},
     )
+
+@login_required
+def rule_list(request):
+    rules = Rule.objects.all().order_by('timestamp')
+    return render(request, 'academy/rules/rule_list.html', {'rules': rules})
+
+@login_required
+def rule_create(request):
+    form_name = "Create Rule"
+    if request.method == "POST":
+        form = RuleForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('rule-list')
+    else:
+        form = RuleForm()
+    return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('rule-list'), })
+
+@login_required
+def rule_update(request, pk):
+    form_name = "Update Rule"
+    band = get_object_or_404(Rule, pk=pk)
+    if request.method == "POST":
+        form = RuleForm(request.POST, instance=band)
+        if form.is_valid():
+            form.save()
+            return redirect('rule-list')
+    else:
+        form = RuleForm(instance=band)
+    return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('rule-list'), })
+
+@login_required
+def rule_delete(request, pk):
+    instance = get_object_or_404(Rule, pk=pk)
+    if request.method == "POST":
+        instance.delete()
+        if request.htmx:
+            rules = Rule.objects.all().order_by("timestamp")
+            return render(request, "academy/rules/partials/table_body.html", {"rules": rules})
+
+    return render(
+        request,
+        "partials/confirm_delete.html",
+        {"instance": instance, "reverse_url": reverse("rule-list"), "delete_view_name": "rule-delete"},
+    )
+
+@login_required
+def rule_view(request, pk):
+    instance = get_object_or_404(Rule, pk=pk)
+    return render(request, 'academy/view.html', {'instance': instance})

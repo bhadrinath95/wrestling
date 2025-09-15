@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import SingleMatch, Tournament
-from .forms import SingleMatchForm, NotificationForm, TournamentForm, CreateLeagueForm
+from .forms import SingleMatchForm, NotificationForm, TournamentForm, CreateLeagueForm, CreateMatchSetupForm
 from django.urls import reverse_lazy
 from .utils import generate_winner, get_paginated_object_list
 from django.urls import reverse
@@ -36,6 +36,49 @@ def tournament_create(request):
     else:
         form = TournamentForm()
     return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('tournament_list'), })
+
+@login_required
+def tournament_match_setup(request, pk):
+    tournament = get_object_or_404(Tournament, pk=pk)
+    form_name = f"Create Match  for Tournament- {tournament.name}"
+    form = CreateMatchSetupForm()
+
+    if request.method == "POST":
+        form = CreateMatchSetupForm(request.POST)
+        if form.is_valid():
+            players = form.cleaned_data.get("players")
+            price_amount = form.cleaned_data.get("price_amount") or 0
+            entry_amount = form.cleaned_data.get("entry_amount") or 0
+            match_name = form.cleaned_data.get("match_name")
+
+            match_date = datetime.date.today()
+            count = 1
+
+            for p1, p2 in combinations(players, 2):
+                SingleMatch.objects.create(
+                    name=f"{match_name} Match {count}",
+                    date=match_date,
+                    tournament=tournament,
+                    player_1=p1,
+                    player_2=p2,
+                    winner=None,
+                    price_amount=price_amount,
+                    entry_amount=entry_amount,
+                )
+                count += 1
+
+            return redirect("tournament_list")
+
+    return render(
+        request,
+        "matches/tournament/tournament_match_setup_form.html",
+        {
+            "form": form,
+            "form_name": form_name,
+            "list_url": reverse("tournament_list"),
+        },
+    )
+
 
 @login_required
 def tournament_create_league(request, pk):
@@ -104,7 +147,7 @@ def tournament_delete(request, pk):
         instance.delete()
         if request.htmx:
                 tournaments = Tournament.objects.all().order_by("-updated_at")
-                return render(request, "matches/singlematch/tournament/partials/table_body.html", {"tournaments": tournaments})
+                return render(request, "matches/tournament/partials/table_body.html", {"tournaments": tournaments})
     return render(
         request,
         "partials/confirm_delete.html",

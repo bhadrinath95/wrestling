@@ -72,3 +72,35 @@ class NotificationForm(forms.ModelForm):
                 'placeholder': 'Enter notification...'
             }),
         }
+
+class CreateMatchSetupForm(forms.Form):
+    match_name = forms.CharField(
+        label="Match Name Prefix",
+        max_length=100,
+        required=False,
+        help_text="Optional. Example: 'League', matches will be named 'League Match 1', 'League Match 2', etc."
+    )
+
+    players = forms.ModelMultipleChoiceField(
+        queryset=Player.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        label="Select Players"
+    )
+
+    price_amount = forms.DecimalField(
+        label="Prize Amount",
+        required=False,
+        min_value=0,
+        decimal_places=2,
+        max_digits=10,
+        initial=0
+    )
+
+    entry_amount = forms.DecimalField(
+        label="Entry Amount",
+        required=False,
+        min_value=0,
+        decimal_places=2,
+        max_digits=10,
+        initial=0
+    )

@@ -79,6 +79,11 @@ img {
                     <p><strong>Player Count:</strong> {{ instance.player_count }}</p>
                 {% endif %}
 
+                {% if instance.content %}
+                    <p><strong>Description:</strong> {{ instance.content|linebreaks }}</p>
+                {% endif %}
+
+
                 </p>
             </div>
         </div>

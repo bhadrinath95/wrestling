@@ -1,5 +1,6 @@
 import random
 from academy.models import Championship
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 def generate_winner(match):
     if not match.winner:
@@ -63,3 +64,14 @@ def generate_winner(match):
         loser_band.networth = loser_band.networth - (match.entry_amount * 1/3)
         loser_band.save()
     return
+
+def get_paginated_object_list(request, page_request_var, query_set, count):
+    paginator = Paginator(query_set, count) 
+    page = request.GET.get(page_request_var)
+    try:
+        query_set = paginator.page(page)
+    except PageNotAnInteger:
+        query_set = paginator.page(1)
+    except EmptyPage:
+        query_set = paginator.page(paginator.num_pages)
+    return query_set

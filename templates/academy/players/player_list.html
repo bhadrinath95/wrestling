@@ -18,39 +18,16 @@
 </form>
 </div>
 <div class="table-responsive">
+<div id="dialog"></div>
 <table class="table table-hover table-bordered">
   <thead class="table-dark">
     <tr>
-      <th>Name</th><th>Championship</th><th>Gender</th><th>Wins</th><th>Matches</th>
+      <th>Name</th><th>Gender</th><th>Wins</th><th>Matches</th>
       <th>Win %</th><th>Net Worth</th><th>Band</th><th>Spouse</th><th>Actions</th>
     </tr>
   </thead>
-  <tbody>
-    {% if players %}
-      {% for player in players %}
-      <tr>
-        <td>{{ player.name }}</td>
-        <td>{{ player.gender }}</td>
-        <td>{{ player.wins }}</td>
-        <td>{{ player.matchesplayed }}</td>
-        <td>{{ player.winningpercentage|floatformat:2 }}%</td>
-        <td>₹ {{ player.networth|floatformat:2 }}</td>
-        <td>{{ player.band.name }}</td>
-        <td>
-          {% if player and player.spouse %}
-            {{ player.spouse.name }}
-          {% endif %}
-        </td>
-        <td>
-          <a href="{% url 'player-view' player.id %}" class="btn btn-info btn-sm">View</a>
-          <a href="{% url 'player-update' player.pk %}" class="btn btn-sm btn-warning">Edit</a>
-          <a href="{% url 'player-delete' player.pk %}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="8" class="text-center">No players yet.</td></tr>
-      {% endfor %}
-    {% endif %}
+  <tbody id="table-body">
+    {% include "academy/players/partials/table_body.html" %}
   </tbody>
 </table>
 </div>

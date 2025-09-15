@@ -45,16 +45,18 @@ def band_delete(request, pk):
     instance = get_object_or_404(Band, pk=pk)
     if request.method == "POST":
         instance.delete()
-        return redirect('band-list')
-    return render(request, 'confirm_delete.html', {'instance': instance, 'reverse_url': reverse('band-list')})
+        if request.htmx:
+            bands = Band.objects.all()
+            return render(request, "academy/bands/partials/table_body.html", {"bands": bands})
 
+    return render(
+        request,
+        "partials/confirm_delete.html",
+        {"instance": instance, "reverse_url": reverse("band-list"), "delete_view_name": "band-delete"},
+    )
 
-@login_required
-def player_list(request):
-    form = PlayerFilterForm(request.GET or None)
-
+def get_player_object_list(form):
     players = Player.objects.all().order_by("name")
-
     if form.is_valid():
         band = form.cleaned_data.get("band")
         gender = form.cleaned_data.get("gender")
@@ -68,7 +70,12 @@ def player_list(request):
             players = players.order_by(sort_by)
         else:
             players = players.order_by("name")
+    return players
 
+@login_required
+def player_list(request):
+    form = PlayerFilterForm(request.GET or None)
+    players = get_player_object_list(form)
     return render(
         request,
         "academy/players/player_list.html",
@@ -78,23 +85,7 @@ def player_list(request):
 @login_required
 def player_images(request):
     form = PlayerFilterForm(request.GET or None)
-
-    players = Player.objects.all().order_by("name")
-
-    if form.is_valid():
-        band = form.cleaned_data.get("band")
-        gender = form.cleaned_data.get("gender")
-        sort_by = form.cleaned_data.get("sort_by")
-
-        if band:
-            players = players.filter(band=band)
-        if gender:
-            players = players.filter(gender=gender)
-        if sort_by:
-            players = players.order_by(sort_by)
-        else:
-            players = players.order_by("name")
-
+    players = get_player_object_list(form)
     return render(
         request,
         "academy/players/player_image.html",
@@ -131,8 +122,20 @@ def player_delete(request, pk):
     instance = get_object_or_404(Player, pk=pk)
     if request.method == "POST":
         instance.delete()
-        return redirect('player-list')
-    return render(request, 'confirm_delete.html', {'instance': instance, 'reverse_url': reverse('player-list')})
+        if request.htmx:
+            form = PlayerFilterForm(request.GET or None)
+            players = get_player_object_list(form)
+            return render(
+                request,
+                "academy/players/partials/table_body.html",
+                {"players": players},
+            )
+    return render(
+        request,
+        "partials/confirm_delete.html",
+        {"instance": instance, "reverse_url": reverse("player-list"), "delete_view_name": "player-delete"},
+    )
+
 
 @login_required
 def band_view(request, pk):
@@ -184,5 +187,12 @@ def championship_delete(request, pk):
     instance = get_object_or_404(Championship, pk=pk)
     if request.method == "POST":
         instance.delete()
-        return redirect('championship-list')
-    return render(request, 'confirm_delete.html', {'instance': instance, 'reverse_url': reverse('championship-list')})
+        if request.htmx:
+            championships = Championship.objects.all().order_by('name')
+            return render(request, "academy/championship/partials/table_body.html", {"championships": championships})
+
+    return render(
+        request,
+        "partials/confirm_delete.html",
+        {"instance": instance, "reverse_url": reverse("championship-list"), "delete_view_name": "championship-delete"},
+    )

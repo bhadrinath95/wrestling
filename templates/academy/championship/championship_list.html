@@ -4,6 +4,7 @@
 <h2 class="mb-3">Championship</h2>
 <a href="{% url 'championship-create' %}" class="btn btn-primary mb-3">Add Championship</a>
 <div class="table-responsive">
+<div id="dialog"></div>
 <table class="table table-bordered table-striped">
   <thead class="table-dark">
     <tr>
@@ -14,20 +15,8 @@
       <th>Hike</th>
     </tr>
   </thead>
-  <tbody>
-    {% for championship in championships %}
-    <tr>
-      <td>{{ championship.name }}</td>
-      <td>{{ championship.player.name }}</td>
-      <td>{{ championship.player.band }}</td>
-      <td>{{ championship.hike }}</td>
-      <td>
-        <a href="{% url 'championship-view' championship.id %}" class="btn btn-info btn-sm">View</a>
-        <a href="{% url 'championship-update' championship.id %}" class="btn btn-warning btn-sm">Edit</a>
-        <a href="{% url 'championship-delete' championship.id %}" class="btn btn-danger btn-sm">Delete</a>
-      </td>
-    </tr>
-    {% endfor %}
+  <tbody id="table-body">
+    {% include "academy/championship/partials/table_body.html" %}
   </tbody>
 </table>
 </div>

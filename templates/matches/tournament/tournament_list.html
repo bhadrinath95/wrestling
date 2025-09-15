@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Tournaments</h2>
+    <a href="{% url 'tournament_create' %}" class="btn btn-primary mb-3">Create New Tournament</a>
+
+    {% if tournament %}
+        <div class="row">
+            <h3>{{ tournament.name }}</h3>
+        </div>
+    {% endif %}
+
+    <div class="table-responsive">
+        <div id="dialog"></div>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                {% include "matches/tournament/partials/table_body.html" %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

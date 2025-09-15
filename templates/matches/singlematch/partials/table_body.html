@@ -1,0 +1,30 @@
+{% for match in matches %}
+<tr>
+    <td>{{ match.name }}</td>
+    <td>{{ match.tournament }}</td>
+    <td>{{ match.player_1 }}</td>
+    <td>{{ match.player_2 }}</td>
+    <td>{{ match.winner }}</td>
+    <td>{{ match.date }}</td>
+    <td>₹ {{ match.price_amount|floatformat:2 }}</td>
+    <td>₹ {{ match.entry_amount|floatformat:2 }}</td>
+    <td>
+        <a href="{% url 'singlematch_detail' match.pk %}" class="btn btn-primary btn-sm">View</a>
+        {% if not match.winner %}
+            <a href="{% url 'singlematch_update' match.pk %}" class="btn btn-warning btn-sm">Edit</a>
+            <a class="btn btn-danger btn-sm"
+                hx-get="{% url 'singlematch_delete' match.pk %}" 
+                hx-target="#dialog" 
+                hx-swap="innerHTML">
+            Delete
+            </a>
+            <a href="{% url 'singlematch_run' match.pk %}" class="btn btn btn-success btn-sm">Run</a>
+        {% endif %}
+        <a href="{% url 'create_notification' match.pk %}" class="btn btn btn-info btn-sm">Notify</a>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="8" class="text-center">No matches available.</td>
+</tr>
+{% endfor %}

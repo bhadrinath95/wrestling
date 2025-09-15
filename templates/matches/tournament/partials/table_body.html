@@ -1,0 +1,22 @@
+{% for tournament in tournaments %}
+<tr>
+    <td>{{ tournament.name }}</td>
+    <td>
+        <a href="{% url 'tournament_detail' tournament.pk %}" class="btn btn-primary btn-sm">View</a>
+        {% if not match.winner %}
+            <a href="{% url 'tournament_update' tournament.pk %}" class="btn btn-warning btn-sm">Edit</a>
+            <a href="{% url 'tournament_create_league' tournament.pk %}" class="btn btn btn-success btn-sm">Create League</a>
+            <a class="btn btn-danger btn-sm"
+                hx-get="{% url 'tournament_delete' tournament.pk %}" 
+                hx-target="#dialog" 
+                hx-swap="innerHTML">
+            Delete
+            </a>
+        {% endif %}
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="8" class="text-center">No tournament available.</td>
+</tr>
+{% endfor %}

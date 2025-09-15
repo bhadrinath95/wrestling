@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Matches</h2>
+    <a href="{% url 'singlematch_create' %}" class="btn btn-primary mb-3">Create New Match</a>
+    <a href="{% url 'complete_all_matches' %}" class="btn btn-warning mb-3">Complete All Matches</a>
+
+    {% if tournament %}
+        <div class="row">
+            <h3>{{ tournament.name }}</h3>
+        </div>
+    {% endif %}
+
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="q" value="{{ query|default:'' }}" class="form-control"
+                   placeholder="Search by match, player, band, or tournament...">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <div id="dialog"></div>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Tournament</th>
+                    <th>Player 1</th>
+                    <th>Player 2</th>
+                    <th>Winner</th>
+                    <th>Date</th>
+                    <th>Price</th>
+                    <th>Entry</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                {% include "matches/singlematch/partials/table_body.html" %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if matches.has_previous %}
+                <a href='?{{ page_request_var }}={{ matches.previous_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}'>Previous</a>
+            {% endif %}
+            
+            <span class="current">
+                Page {{ matches.number }} of {{ matches.paginator.num_pages }}.
+            </span>
+            
+            {% if matches.has_next %}
+                <a href="?{{ page_request_var }}={{ matches.next_page_number }}{% if request.GET.query %}&query={{ request.GET.query }}{% endif %}">Next</a>
+            {% endif %}
+        </span>
+</div>
+
+</div>
+{% endblock %}

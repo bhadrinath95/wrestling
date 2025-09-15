@@ -109,7 +109,6 @@ img {
         <p>
             {% if not match.winner %}
                 <a href="{% url 'singlematch_update' match.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                <a href="{% url 'singlematch_delete' match.pk %}" class="btn btn-danger btn-sm">Delete</a>
                 <a href="{% url 'singlematch_run' match.pk %}" class="btn btn btn-success btn-sm">Run</a>
             {% endif %}
             <a href="{% url 'create_notification' match.pk %}" class="btn btn btn-info btn-sm">Notify</a>

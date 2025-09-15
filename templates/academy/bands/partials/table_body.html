@@ -1,0 +1,22 @@
+{% for band in bands %}
+<tr>
+  <td>{{ band.name }}</td>
+  <td>₹ {{ band.networth|floatformat:2 }}</td>
+  <td>{{ band.men_count }}</td>
+  <td>{{ band.women_count }}</td>
+  <td>{{ band.player_count }}</td>
+  <td>{{ band.matchesplayed }}</td>
+  <td>{{ band.wins }}</td>
+  <td>{{ band.winningpercentage }}%</td>
+  <td>
+    <a href="{% url 'band-view' band.id %}" class="btn btn-info btn-sm">View</a>
+    <a href="{% url 'band-update' band.id %}" class="btn btn-warning btn-sm">Edit</a>
+    <a class="btn btn-danger btn-sm"
+        hx-get="{% url 'band-delete' band.id %}" 
+        hx-target="#dialog" 
+        hx-swap="innerHTML">
+    Delete
+    </a>
+  </td>
+</tr>
+{% endfor %}

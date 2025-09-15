@@ -1,0 +1,16 @@
+<div class="alert alert-danger">
+  <h4>Delete {{ instance }}</h4>
+  <p>Are you sure you want to delete <strong>{{ instance }}</strong>?</p>
+  <form method="post"
+        hx-post="{% url delete_view_name instance.id %}"
+        hx-target="#table-body"
+        hx-swap="innerHTML"
+        hx-on="htmx:afterOnLoad: document.getElementById('dialog').innerHTML=''">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <button type="button" class="btn btn-secondary" 
+            onclick="document.getElementById('dialog').innerHTML=''">
+      Cancel
+    </button>
+  </form>
+</div>

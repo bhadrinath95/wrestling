@@ -81,3 +81,6 @@ class Championship(models.Model):
     image_url = models.CharField(max_length=120, null=True, blank=True)
     hike = models.FloatField()
     updated_on = models.DateTimeField(auto_now=True) 
+
+    def __str__(self):
+        return self.name

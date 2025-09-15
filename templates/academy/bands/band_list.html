@@ -4,6 +4,7 @@
 <h2 class="mb-3">Bands</h2>
 <a href="{% url 'band-create' %}" class="btn btn-primary mb-3">Add Band</a>
 <div class="table-responsive">
+<div id="dialog"></div>
 <table class="table table-bordered table-striped">
   <thead class="table-dark">
     <tr>
@@ -18,24 +19,8 @@
       <th>Actions</th>
     </tr>
   </thead>
-  <tbody>
-    {% for band in bands %}
-    <tr>
-      <td>{{ band.name }}</td>
-      <td>₹ {{ band.networth|floatformat:2 }}</td>
-      <td>{{ band.men_count }}</td>
-      <td>{{ band.women_count }}</td>
-      <td>{{ band.player_count }}</td>
-      <td>{{ band.matchesplayed }}</td>
-      <td>{{ band.wins }}</td>
-      <td>{{ band.winningpercentage }}%</td>
-      <td>
-        <a href="{% url 'band-view' band.id %}" class="btn btn-info btn-sm">View</a>
-        <a href="{% url 'band-update' band.id %}" class="btn btn-warning btn-sm">Edit</a>
-        <a href="{% url 'band-delete' band.id %}" class="btn btn-danger btn-sm">Delete</a>
-      </td>
-    </tr>
-    {% endfor %}
+  <tbody id="table-body">
+    {% include "academy/bands/partials/table_body.html" %}
   </tbody>
 </table>
 </div>

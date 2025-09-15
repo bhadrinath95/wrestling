@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import SingleMatch, Tournament
 from .forms import SingleMatchForm, NotificationForm, TournamentForm, CreateLeagueForm
 from django.urls import reverse_lazy
-from .utils import generate_winner
+from .utils import generate_winner, get_paginated_object_list
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from academy.models import Championship
@@ -11,21 +11,19 @@ import datetime
 from academy.models import Band, Player
 from itertools import combinations
 
+
 # ---------- TOURNAMENT MATCH VIEWS ----------
 @login_required
 def tournament_list(request):
     tournaments = Tournament.objects.all().order_by("-updated_at")
-    return render(request, 'matches/tournament_list.html', {'tournaments': tournaments})
+    return render(request, 'matches/tournament/tournament_list.html', {'tournaments': tournaments})
 
 @login_required
 def tournament_detail(request, pk):
     tournament = get_object_or_404(Tournament, pk=pk)
-
     matches = SingleMatch.objects.all().order_by("-updated_at")
     matches = matches.filter(tournament=tournament)
-
-
-    return render(request, 'matches/singlematch_list.html', {'tournament': tournament, 'matches': matches})
+    return render(request, 'matches/singlematch/singlematch_list.html', {'tournament': tournament, 'matches': matches})
 
 @login_required
 def tournament_create(request):
@@ -104,15 +102,18 @@ def tournament_delete(request, pk):
     instance = get_object_or_404(Tournament, pk=pk)
     if request.method == 'POST':
         instance.delete()
-        return redirect('tournament_list')
-    return render(request, 'confirm_delete.html', {'instance': instance, 'reverse_url': reverse('tournament_list')})
+        if request.htmx:
+                tournaments = Tournament.objects.all().order_by("-updated_at")
+                return render(request, "matches/singlematch/tournament/partials/table_body.html", {"tournaments": tournaments})
+    return render(
+        request,
+        "partials/confirm_delete.html",
+        {"instance": instance, "reverse_url": reverse("tournament_list"), "delete_view_name": "tournament_delete"},
+    )
 
 # ---------- SINGLE MATCH VIEWS ----------
-@login_required
-def singlematch_list(request):
-    query = request.GET.get("q")
-
-    matches = (
+def get_single_match_object_list():
+    return (
         SingleMatch.objects
         .annotate(
             is_unfinished=Case(
@@ -121,14 +122,22 @@ def singlematch_list(request):
                 output_field=IntegerField(),
             )
         )
-    )
+    ).order_by("is_unfinished", "-updated_at")
 
+@login_required
+def singlematch_list(request):
+    query = request.GET.get("q")
+    matches = get_single_match_object_list()
     if query:
-        matches = matches.search(query)   # ✅ uses your QuerySet.search()
-
-    matches = matches.order_by("is_unfinished", "-updated_at")
-
-    return render(request, 'matches/singlematch_list.html', {'tournament': None, 'matches': matches})
+        matches = matches.search(query)
+    page_request_var = 'page'
+    matches = get_paginated_object_list(request, page_request_var, matches, 25)
+    context = {
+        'tournament': None, 
+        "page_request_var": page_request_var, 
+        'matches': matches
+        }
+    return render(request, 'matches/singlematch/singlematch_list.html', context)
 
 @login_required
 def singlematch_detail(request, pk):
@@ -137,7 +146,7 @@ def singlematch_detail(request, pk):
 
     return render(
         request,
-        'matches/singlematch_detail.html',
+        'matches/singlematch/singlematch_detail.html',
         {
             'match': match,
             'notifications': notifications
@@ -174,8 +183,21 @@ def singlematch_delete(request, pk):
     instance = get_object_or_404(SingleMatch, pk=pk)
     if request.method == 'POST':
         instance.delete()
-        return redirect('singlematch_list')
-    return render(request, 'confirm_delete.html', {'instance': instance, 'reverse_url': reverse('singlematch_list')})
+        if request.htmx:
+            matches = get_single_match_object_list()
+            page_request_var = 'page'
+            matches = get_paginated_object_list(request, page_request_var, matches, 25)
+            context = {
+                'tournament': None, 
+                "page_request_var": page_request_var, 
+                'matches': matches
+                }
+            return render(
+                request,
+                "matches/singlematch/partials/table_body.html",
+                context
+            )
+    return render(request, 'partials/confirm_delete.html', {'instance': instance, 'reverse_url': reverse('singlematch_list'), "delete_view_name": "singlematch_delete"})
 
 @login_required
 def singlematch_execute(request, pk):

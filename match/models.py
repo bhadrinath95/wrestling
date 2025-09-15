@@ -9,6 +9,7 @@ class Tournament(models.Model):
     name = models.CharField(max_length=200)
     date = models.DateField()
     updated_at = models.DateTimeField(auto_now=True) 
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

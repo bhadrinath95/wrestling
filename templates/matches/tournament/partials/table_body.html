@@ -3,7 +3,7 @@
     <td>{{ tournament.name }}</td>
     <td>
         <a href="{% url 'tournament_detail' tournament.pk %}" class="btn btn-primary btn-sm">View</a>
-        {% if not match.winner %}
+        {% if not tournament.is_completed %}
             <a href="{% url 'tournament_update' tournament.pk %}" class="btn btn-warning btn-sm">Edit</a>
             <a href="{% url 'tournament_create_league' tournament.pk %}" class="btn btn btn-success btn-sm">Create League</a>
             <a href="{% url 'tournament_match_setup' tournament.pk %}" class="btn btn btn-info btn-sm">Custom Setup</a>

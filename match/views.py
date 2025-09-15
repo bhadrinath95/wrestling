@@ -15,7 +15,7 @@ from itertools import combinations
 # ---------- TOURNAMENT MATCH VIEWS ----------
 @login_required
 def tournament_list(request):
-    tournaments = Tournament.objects.all().order_by("-updated_at")
+    tournaments = Tournament.objects.all().order_by("is_completed", "-updated_at")
     return render(request, 'matches/tournament/tournament_list.html', {'tournaments': tournaments})
 
 @login_required
@@ -135,7 +135,7 @@ def tournament_update(request, pk):
         form = TournamentForm(request.POST, instance=tournament)
         if form.is_valid():
             form.save()
-            return redirect('tournament_detail', pk=tournament.pk)
+            return redirect('tournament_list')
     else:
         form = TournamentForm(instance=tournament)
     return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('tournament_list'), })

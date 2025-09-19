@@ -11,13 +11,21 @@ import datetime
 from academy.models import Band, Player
 from itertools import combinations
 from django.db.models import Count
+from django.utils.timezone import now
 
 
 # ---------- TOURNAMENT MATCH VIEWS ----------
 @login_required
 def tournament_list(request):
-    tournaments = Tournament.objects.all().order_by("is_completed", "-updated_at")
+    tournaments = Tournament.objects.all().order_by("is_completed", "is_main_tournament", "-updated_at")
     return render(request, 'matches/tournament/tournament_list.html', {'tournaments': tournaments})
+
+@login_required
+def tournament_complete(request, pk):
+    tournament = get_object_or_404(Tournament, pk=pk)
+    tournament.is_completed = True
+    tournament.save()
+    return redirect('tournament_list')
 
 @login_required
 def tournament_detail(request, pk):
@@ -272,7 +280,7 @@ def singlematch_execute(request, pk):
 
 @login_required
 def singlematch_complete_all_matches(request):
-    matches = SingleMatch.objects.filter(winner=None)
+    matches = SingleMatch.objects.filter(winner=None, tournament__is_main_tournament=False)
     for match in matches:
         generate_winner(match)
     return redirect('singlematch_list')
@@ -297,3 +305,18 @@ def create_notification(request, pk):
         'form.html',
         {'form': form, "form_name": form_name, 'list_url': reverse('singlematch_list'), }
     )
+
+@login_required
+def upcoming_main_tournament(request):
+    tournament = (
+        Tournament.objects
+        .filter(is_main_tournament=True, is_completed=False, date__gte=now().date())
+        .order_by("date")
+        .first()
+    )
+    matches = SingleMatch.objects.filter(tournament=tournament)
+    context = {
+        "tournament": tournament,
+        "matches": matches
+    }
+    return render(request, "matches/tournament/upcoming_main.html", context)

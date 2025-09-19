@@ -10,6 +10,8 @@ urlpatterns = [
     path('tournament/create/match/<int:pk>', views.tournament_match_setup, name='tournament_match_setup'),
     path('tournament/<int:pk>/update/', views.tournament_update, name='tournament_update'),
     path('tournament/<int:pk>/delete/', views.tournament_delete, name='tournament_delete'),
+    path('tournament/main_event', views.upcoming_main_tournament, name='main_event'),
+    path('tournament/<int:pk>/complete', views.tournament_complete, name='tournament_complete'),
 
     path('single/', views.singlematch_list, name='singlematch_list'),
     path('single/<int:pk>/', views.singlematch_detail, name='singlematch_detail'),

@@ -19,7 +19,7 @@
         <tbody id="table-body">
             {% for auction in auctions %}
             <tr>
-                <td>{{ auction.player.name }}</td>
+                <td><a href="{% url 'player-view' auction.player.id %}">{{ auction.player.name }}</a></td>
                 <td>{{ auction.from_band.name }}</td>
                 <td>{{ auction.to_band.name }}</td>
                 <td>₹ {{ auction.price|floatformat:2 }}</td>

@@ -68,6 +68,14 @@
                 <td>{{ tournament.date|timeuntil }}</td>
             </tr>
             <tr>
+                <th>Championship freeze:</th>
+                {% if championship_freeze %}
+                <td><p style="color: red;">Active</p></td>
+                {% else %}
+                <td>{{ days_until }} days to go</td>
+                {% endif %}
+            </tr>
+            <tr></tr>
         </table>
     </div>
 </div><br />

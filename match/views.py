@@ -17,7 +17,7 @@ from django.utils.timezone import now
 # ---------- TOURNAMENT MATCH VIEWS ----------
 @login_required
 def tournament_list(request):
-    tournaments = Tournament.objects.all().order_by("is_completed", "is_main_tournament", "-updated_at")
+    tournaments = Tournament.objects.all().order_by("is_completed", "is_main_tournament", "date", "-updated_at")
     return render(request, 'matches/tournament/tournament_list.html', {'tournaments': tournaments})
 
 @login_required
@@ -314,9 +314,17 @@ def upcoming_main_tournament(request):
         .order_by("date")
         .first()
     )
+    championship_freeze = False
+    if tournament:
+        days_until = (tournament.date - now().date()).days
+        if days_until <= 7:
+            championship_freeze = True
+
     matches = SingleMatch.objects.filter(tournament=tournament)
     context = {
         "tournament": tournament,
-        "matches": matches
+        "matches": matches,
+        "championship_freeze": championship_freeze,
+        "days_until": days_until
     }
     return render(request, "matches/tournament/upcoming_main.html", context)

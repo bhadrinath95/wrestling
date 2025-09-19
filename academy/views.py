@@ -6,9 +6,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
 import random
+from django.utils import timezone
+from match.models import Tournament
+
 
 def home_view(request):
-    return render(request, 'base.html', {})
+    return render(request, 'home.html', {})
 
 def custom_404_view(request, exception):
     return render(request, '404.html', status=404)
@@ -289,3 +292,12 @@ def rule_delete(request, pk):
 def rule_view(request, pk):
     instance = get_object_or_404(Rule, pk=pk)
     return render(request, 'academy/view.html', {'instance': instance})
+
+@login_required
+def auction_list(request):
+    auctions = Auction.objects.all().order_by('-date')
+    context = {
+        'auctions': auctions
+    }
+    return render(request, 'academy/auctions/auction_list.html', context)
+    

@@ -10,6 +10,8 @@ class Tournament(models.Model):
     date = models.DateField()
     updated_at = models.DateTimeField(auto_now=True) 
     is_completed = models.BooleanField(default=False)
+    is_main_tournament = models.BooleanField(default=False)
+    image_url = models.CharField(max_length=120, null=True, blank=True)
 
     def __str__(self):
         return self.name

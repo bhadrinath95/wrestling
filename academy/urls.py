@@ -31,4 +31,7 @@ urlpatterns = [
     path('rule/<int:pk>/view/', views.rule_view, name='rule-view'),
     path('rule/<int:pk>/edit/', views.rule_update, name='rule-update'),
     path('rule/<int:pk>/delete/', views.rule_delete, name='rule-delete'),
+
+    # Auction
+    path('auction/', views.auction_list, name='auction_list'),
 ]

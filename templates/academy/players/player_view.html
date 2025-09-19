@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block style %}
+img {
+    width: 50%;
+    height: 50%;
+    object-fit: cover; /* crop to fill container while maintaining aspect */
+    display: block;
+}
+{% endblock %}
+{% if instance %}
+    {% block title %}{{ instance.name }}{% endblock %}
+    {% block content %}
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3>{{ instance.name }} {% if instance.championship.name %}<span class="badge bg-warning text-dark mt-1">{{ instance.championship.name }}</span>{% endif %}</h3>
+            </div>
+
+            <div class="card-body">
+                {% if instance.image_url %}
+                        <div class="text-center mb-3">
+                            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.image_url }}"
+                                alt="{{ instance.name }}">
+                        </div>
+                {% endif %}
+
+                {% if message %}
+                    <div class="container mt-3">
+                        <div class="alert 
+                            {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} 
+                            alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if instance.gender %}
+                    <p><strong>Gender:</strong> {{ instance.gender }}</p>
+                {% endif %}
+
+                {% if instance.wins %}
+                    <p><strong>Wins:</strong> {{ instance.wins }}</p>
+                {% endif %}
+
+                {% if instance.matchesplayed %}
+                    <p><strong>Matches Played:</strong> {{ instance.matchesplayed }}</p>
+                {% endif %}
+
+                {% if instance.winningpercentage %}
+                    <p><strong>Winning %:</strong> {{ instance.winningpercentage|floatformat:2 }}</p>
+                {% endif %}
+
+                {% if instance.band %}
+                    <p><strong>Band:</strong> {{ instance.band.name }}</p>
+                {% endif %}
+
+                {% if instance.spouse %}
+                    <p><strong>Spouse:</strong> {{ instance.spouse.name }}
+                {% endif %}
+
+                {% if instance.networth %}
+                    <p><strong>Networth:</strong> ₹ {{ instance.networth|floatformat:2 }}</p>
+                {% endif %}
+
+                </p>
+
+                {% if instance.band.name == "NXT Generations Band" %}
+                    <a href="{% url 'player-auction' instance.id %}" class="btn btn-info btn-sm">Auction</a>
+                {% endif %}
+            </div>
+        </div>
+
+    {% endblock %}
+{% endif %}

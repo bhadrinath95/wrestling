@@ -16,6 +16,7 @@ urlpatterns = [
     path('players/<int:pk>/view/', views.player_view, name='player-view'),
     path('players/<int:pk>/edit/', views.player_update, name='player-update'),
     path('players/<int:pk>/delete/', views.player_delete, name='player-delete'),
+    path('players/<int:pk>/auction/', views.player_auction, name='player-auction'),
 
     # Championship
     path('championship/', views.championship_list, name='championship-list'),

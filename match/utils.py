@@ -3,6 +3,8 @@ from academy.models import Championship
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 def generate_winner(match):
+    print(match)
+    
     if not match.winner:
         player_1 = match.player_1
         player_2 = match.player_2

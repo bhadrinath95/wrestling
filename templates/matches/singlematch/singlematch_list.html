@@ -9,6 +9,19 @@
         <div class="row">
             <h3>{{ tournament.name }}</h3>
         </div>
+
+        {% if top_players %}
+        <h3>Top Player(s) in {{ tournament.name }}</h3>
+        <ul>
+            {% for player in top_players %}
+            <li>
+                {{ player.band.emoji }} {{ player.name }} — Wins: {{ player.wins_count }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No wins recorded yet.</p>
+        {% endif %}
     {% endif %}
 
     <form method="get" class="mb-3">

@@ -2,7 +2,7 @@ from django import forms
 from .models import Notification, SingleMatch, Tournament
 from academy.models import Band
 from django.contrib.contenttypes.models import ContentType
-from academy.models import Player
+from academy.models import Player, Championship
 
 class SingleMatchForm(forms.ModelForm):
     class Meta:
@@ -82,7 +82,7 @@ class CreateMatchSetupForm(forms.Form):
     )
 
     players = forms.ModelMultipleChoiceField(
-        queryset=Player.objects.all(),
+        queryset=Player.objects.all().order_by("-winningpercentage"),
         widget=forms.CheckboxSelectMultiple,
         label="Select Players"
     )
@@ -104,3 +104,15 @@ class CreateMatchSetupForm(forms.Form):
         max_digits=10,
         initial=0
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Customize label for each player
+        champions = set(
+            Championship.objects.values_list("player_id", flat=True)
+        )
+
+        self.fields["players"].label_from_instance = lambda player: (
+            f"{player.band.emoji or ''} {player.name}{' ©️' if player.id in champions else ''} | {'M' if player.gender == "Male" else 'F'} | {round(player.winningpercentage, 2)}%"
+        ).strip()

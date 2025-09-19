@@ -10,6 +10,7 @@ from django.db.models import Case, When, Value, IntegerField
 import datetime
 from academy.models import Band, Player
 from itertools import combinations
+from django.db.models import Count
 
 
 # ---------- TOURNAMENT MATCH VIEWS ----------
@@ -21,9 +22,30 @@ def tournament_list(request):
 @login_required
 def tournament_detail(request, pk):
     tournament = get_object_or_404(Tournament, pk=pk)
-    matches = SingleMatch.objects.all().order_by("-updated_at")
-    matches = matches.filter(tournament=tournament)
-    return render(request, 'matches/singlematch/singlematch_list.html', {'tournament': tournament, 'matches': matches})
+    matches = SingleMatch.objects.filter(tournament=tournament).order_by("-updated_at")
+
+    # Count wins per player in this tournament
+    player_wins = (
+        Player.objects
+        .filter(single_match_winner__tournament=tournament)   # winner FK -> Player
+        .annotate(wins_count=Count("single_match_winner"))
+        .order_by("-wins_count")
+    )
+
+    top_players = []
+    if player_wins.exists():
+        max_wins = player_wins.first().wins_count
+        top_players = player_wins.filter(wins_count=max_wins)
+
+    return render(
+        request,
+        "matches/singlematch/singlematch_list.html",
+        {
+            "tournament": tournament,
+            "matches": matches,
+            "top_players": top_players,
+        },
+    )
 
 @login_required
 def tournament_create(request):

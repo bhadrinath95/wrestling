@@ -1,8 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Band, Player, Championship, Rule
+from .models import Band, Player, Championship, Rule, Auction
 from .forms import BandForm, PlayerForm, ChampionshipForm, PlayerFilterForm, RuleForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db import transaction
+import random
 
 def home_view(request):
     return render(request, 'base.html', {})
@@ -58,12 +61,15 @@ def band_delete(request, pk):
 def get_player_object_list(form):
     players = Player.objects.all().order_by("name")
     if form.is_valid():
-        band = form.cleaned_data.get("band")
+        bands = form.cleaned_data.get("bands")
         gender = form.cleaned_data.get("gender")
         sort_by = form.cleaned_data.get("sort_by")
+        is_champion = form.cleaned_data.get("is_champion")
 
-        if band:
-            players = players.filter(band=band)
+        if is_champion:
+            players = players.filter(championship__isnull=False)
+        if bands:
+            players = players.filter(band__in=bands)
         if gender:
             players = players.filter(gender=gender)
         if sort_by:
@@ -118,6 +124,43 @@ def player_update(request, pk):
     return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('player-list'), })
 
 @login_required
+def player_auction(request, pk):
+    player = get_object_or_404(Player, pk=pk)
+
+    if player.band is None or player.band.name != "NXT Generations Band":
+        message = "This player is not eligible for auction (not in NXT Generations Band)."
+        return render(request, 'academy/players/player_view.html', {'instance': player, 'message': message})
+
+    min_networth = (2 / 3) * player.networth
+    eligible_bands = Band.objects.exclude(name="NXT Generations Band").filter(networth__gte=min_networth)
+
+    if not eligible_bands.exists():
+        message = "No eligible band found for this auction."
+        return render(request, 'academy/players/player_view.html', {'instance': player, "message": message})
+
+    selected_band = random.choice(list(eligible_bands))
+    old_band = player.band
+
+    with transaction.atomic():
+        player.band = selected_band
+        player.save()
+
+        selected_band.networth -= player.networth
+        selected_band.save()
+
+        Auction.objects.create(
+            player=player,
+            from_band=old_band,
+            to_band=selected_band,
+            price=player.networth,
+        )
+
+    message = f"{player.name} auctioned from {old_band.name} to {selected_band.name}!. Remaining Band Networth: {selected_band.networth:.2f}."
+
+    return render(request, 'academy/players/player_view.html', {'instance': player, "message": message})
+
+
+@login_required
 def player_delete(request, pk):
     instance = get_object_or_404(Player, pk=pk)
     if request.method == "POST":
@@ -145,7 +188,7 @@ def band_view(request, pk):
 @login_required
 def player_view(request, pk):
     instance = get_object_or_404(Player, pk=pk)
-    return render(request, 'academy/view.html', {'instance': instance})
+    return render(request, 'academy/players/player_view.html', {'instance': instance})
 
 @login_required
 def championship_detail(request, pk):

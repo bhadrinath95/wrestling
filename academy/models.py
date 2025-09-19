@@ -6,6 +6,7 @@ class Band(models.Model):
     name = models.CharField(max_length=200)
     networth = models.FloatField(default=0)
     image_url = models.CharField(max_length=120, null=True, blank=True)
+    emoji = models.CharField(max_length=5, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -92,3 +93,13 @@ class Rule(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Auction(models.Model):
+    player = models.ForeignKey("Player", on_delete=models.CASCADE, related_name="auctions")
+    from_band = models.ForeignKey("Band", on_delete=models.SET_NULL, null=True, blank=True, related_name="auctions_from")
+    to_band = models.ForeignKey("Band", on_delete=models.SET_NULL, null=True, blank=True, related_name="auctions_to")
+    price = models.FloatField()  # player's networth used in auction
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Auction: {self.player.name} from {self.from_band} → {self.to_band} for {self.price}"

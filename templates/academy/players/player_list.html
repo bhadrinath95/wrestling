@@ -5,17 +5,7 @@
   <a href="{% url 'player-create' %}" class="btn btn-success">+ Add Player</a>
 </div>
 <div class="row">
-  <form method="get" class="row mb-3">
-    <div class="col-md-3">
-      {{ form.band }}
-    </div>
-    <div class="col-md-3">
-      {{ form.gender }}
-    </div>
-    <div class="col-md-3">
-      {{ form.sort_by }}
-    </div>
-</form>
+  {% include "academy/players/partials/player_filter.html" %}
 </div>
 <div class="table-responsive">
 <div id="dialog"></div>

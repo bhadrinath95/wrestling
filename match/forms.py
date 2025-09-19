@@ -114,5 +114,5 @@ class CreateMatchSetupForm(forms.Form):
         )
 
         self.fields["players"].label_from_instance = lambda player: (
-            f"{player.band.emoji or ''} {player.name}{' ©️' if player.id in champions else ''} | {'M' if player.gender == "Male" else 'F'} | {round(player.winningpercentage, 2)}%"
+            f"""{player.band.emoji or ''} {player.name}{' ©️' if player.id in champions else ''} | {'M' if player.gender == "Male" else 'F'} | {round(player.winningpercentage, 2)}%"""
         ).strip()

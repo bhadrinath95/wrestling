@@ -5,8 +5,10 @@
 <div class="container py-4">
 
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Players</h2>
-    <a href="{% url 'player-create' %}" class="btn btn-success">+ Add Player</a>
+    <h2>{{title}}</h2>
+    {% if form %}
+      <a href="{% url 'player-create' %}" class="btn btn-success">+ Add Player</a>
+    {% endif %}
   </div>
   <!-- Filter Form -->
   {% include "academy/players/partials/player_filter.html" %}
@@ -36,6 +38,11 @@
                 {% if player.championship %}
                   <span class="badge bg-warning text-dark mt-1">
                     {{ player.championship.name }}
+                  </span><br />
+                {% endif %}
+                {% if not player.is_active %}
+                  <span class="badge bg-danger text-dark mt-1">
+                    Not Active
                   </span><br />
                 {% endif %}
                 {% if player.band %}{{ player.band }}{% endif %}<br />

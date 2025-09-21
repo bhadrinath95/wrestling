@@ -88,7 +88,7 @@ def player_list(request):
     return render(
         request,
         "academy/players/player_list.html",
-        {"players": players, "form": form},
+        {"players": players, "form": form, 'title': 'Players List',},
     )
 
 @login_required
@@ -98,7 +98,7 @@ def player_images(request):
     return render(
         request,
         "academy/players/player_image.html",
-        {"players": players, "form": form},
+        {"players": players, "form": form, 'title': 'Players Show',},
     )
 
 @login_required
@@ -167,7 +167,9 @@ def player_auction(request, pk):
 def player_delete(request, pk):
     instance = get_object_or_404(Player, pk=pk)
     if request.method == "POST":
-        instance.delete()
+        instance.is_active = False
+        instance.save()
+        
         if request.htmx:
             form = PlayerFilterForm(request.GET or None)
             players = get_player_object_list(form)
@@ -176,10 +178,15 @@ def player_delete(request, pk):
                 "academy/players/partials/table_body.html",
                 {"players": players},
             )
+
     return render(
         request,
         "partials/confirm_delete.html",
-        {"instance": instance, "reverse_url": reverse("player-list"), "delete_view_name": "player-delete"},
+        {
+            "instance": instance,
+            "reverse_url": reverse("player-list"),
+            "delete_view_name": "player-delete",
+        },
     )
 
 
@@ -190,7 +197,7 @@ def band_view(request, pk):
 
 @login_required
 def player_view(request, pk):
-    instance = get_object_or_404(Player, pk=pk)
+    instance = get_object_or_404(Player.all_objects, pk=pk)
     return render(request, 'academy/players/player_view.html', {'instance': instance})
 
 @login_required
@@ -308,3 +315,12 @@ def championship_history_list(request):
         'championships': championships
     }
     return render(request, 'academy/championship/championship_history.html', context)
+
+@login_required
+def hall_of_frame(request):
+    players = Player.all_objects.filter(is_active=False)
+    context = {
+        'title': 'Hall of frame',
+        'players': players
+    }
+    return render(request, "academy/players/player_image.html", context)

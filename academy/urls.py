@@ -35,4 +35,5 @@ urlpatterns = [
 
     # Auction
     path('auction/', views.auction_list, name='auction_list'),
+    path('hall_of_frame/', views.hall_of_frame, name='hall_of_frame')
 ]

@@ -38,6 +38,11 @@ class Band(models.Model):
         wins = self.wins
         return round((wins / matches) * 100, 2) if matches > 0 else 0
 
+class ActivePlayerManager(models.Manager):
+    def get_queryset(self):
+        # Override to filter only active players
+        return super().get_queryset().filter(is_active=True)
+    
 class Player(models.Model):
     GENDER_CHOICES = [
         ('Male', 'Male'),
@@ -52,7 +57,10 @@ class Player(models.Model):
     winningpercentage = models.FloatField(default=0)
     networth = models.FloatField(default=0)
     image_url = models.CharField(max_length=120, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
+    objects = ActivePlayerManager()
+    all_objects = models.Manager()
 
     spouse = models.OneToOneField(
         'self',

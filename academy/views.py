@@ -116,7 +116,7 @@ def player_create(request):
 @login_required
 def player_update(request, pk):
     form_name = "Update Player"
-    player = get_object_or_404(Player, pk=pk)
+    player = get_object_or_404(Player.all_objects, pk=pk)
     if request.method == "POST":
         form = PlayerForm(request.POST, instance=player)
         if form.is_valid():
@@ -167,6 +167,7 @@ def player_auction(request, pk):
 def player_delete(request, pk):
     instance = get_object_or_404(Player, pk=pk)
     if request.method == "POST":
+        instance.networth = 0
         instance.is_active = False
         instance.save()
         

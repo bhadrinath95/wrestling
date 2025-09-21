@@ -25,7 +25,7 @@ img {
             <img alt="{{ match.player_1.name }}">
             {% endif %}
             <h4>
-                <a href="{% url 'player-view' match.player_1.id %}">{{ match.player_1.name }}</a>{% if match.player_1.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_1.championship.name }}</span>{% endif %}
+                <a href="{% url 'player-view' match.player_1.id %}">{{ match.player_1.name }}</a>{% if match.player_1.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_1.championship.name }}</span>{% endif %} {% if not match.player_1.is_active %} <span class="badge bg-danger text-dark mt-1">Not Active</span>{% endif %}
             </h4>
             <ul>
                 <li><strong>Band: </strong>{{ match.player_1.band }} %</li>
@@ -43,7 +43,7 @@ img {
             <img alt="{{ match.player_2.name }}">
             {% endif %}
             <h4>
-                <a href="{% url 'player-view' match.player_2.id %}">{{ match.player_2.name }}</a>{% if match.player_2.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_2.championship.name }}</span>{% endif %}
+                <a href="{% url 'player-view' match.player_2.id %}">{{ match.player_2.name }}</a>{% if match.player_2.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_2.championship.name }}</span>{% endif %} {% if not match.player_2.is_active %} <span class="badge bg-danger text-dark mt-1">Not Active</span>{% endif %}
             </h4>
             
             <ul>

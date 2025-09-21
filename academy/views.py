@@ -321,7 +321,7 @@ def championship_history_list(request):
 def hall_of_frame(request):
     players = Player.all_objects.filter(is_active=False)
     context = {
-        'title': 'Hall of frame',
+        'title': 'Hall Of Frame',
         'players': players
     }
     return render(request, "academy/players/player_image.html", context)

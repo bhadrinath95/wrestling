@@ -316,8 +316,8 @@ def upcoming_main_tournament(request):
     )
     championship_freeze = False
     if tournament:
-        days_until = (tournament.date - now().date()).days
-        if days_until <= 7:
+        days_until = (tournament.date - now().date()).days - 7
+        if days_until < 0:
             championship_freeze = True
 
     matches = SingleMatch.objects.filter(tournament=tournament)

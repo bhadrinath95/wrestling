@@ -20,6 +20,7 @@ urlpatterns = [
 
     # Championship
     path('championship/', views.championship_list, name='championship-list'),
+    path('championship_history/', views.championship_history_list, name='championship-history'),
     path('championship/create/', views.championship_create, name='championship-create'),
     path('championship/<int:pk>/view/', views.championship_detail, name='championship-view'),
     path('championship/<int:pk>/edit/', views.championship_update, name='championship-update'),

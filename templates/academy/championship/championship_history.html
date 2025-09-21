@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Championship History{% endblock %}
+{% block content %}
+<h2 class="mb-3">Championship History</h2>
+<div class="accordion" id="championshipAccordion">
+    {% for championship in championships %}
+        <div class="accordion-item mb-3 shadow-sm rounded">
+            <h2 class="accordion-header" id="heading{{ championship.id }}">
+                <button class="accordion-button collapsed fw-bold" type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#collapse{{ championship.id }}" 
+                        aria-expanded="false" 
+                        aria-controls="collapse{{ championship.id }}">
+                    
+                    <span class="me-2">🏆 {{ championship.name }}</span>
+
+                    {% if championship.player %}
+                        <span class="badge bg-success ms-2">
+                            Current: {{ championship.player.name }}
+                        </span>
+                    {% else %}
+                        <span class="badge bg-secondary ms-2">
+                            Vacant
+                        </span>
+                    {% endif %}
+                </button>
+            </h2>
+
+            <div id="collapse{{ championship.id }}" 
+                 class="accordion-collapse collapse" 
+                 aria-labelledby="heading{{ championship.id }}" 
+                 data-bs-parent="#championshipAccordion">
+                 
+                <div class="accordion-body">
+                    <h6 class="text-primary mb-3">History</h6>
+
+                    {% if championship.history.all %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Player</th>
+                                        <th>Band</th>
+                                        <th>Reign Start</th>
+                                        <th>Reign End</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in championship.history.all %}
+                                        <tr>
+                                            <td><strong>{{ entry.player.name }}</strong></td>
+                                            <td>{{ entry.player.band }}</td>
+                                            <td>{{ entry.started_on|date:"M d, Y H:i" }}</td>
+                                            <td>
+                                                {% if entry.ended_on %}
+                                                    {{ entry.ended_on|date:"M d, Y H:i" }}
+                                                {% else %}
+                                                    <span class="badge bg-warning text-dark">Present</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if entry.ended_on %}
+                                                    {{ entry.duration.days }} days
+                                                {% else %}
+                                                    {{ entry.duration.days }} days (ongoing)
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No history available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

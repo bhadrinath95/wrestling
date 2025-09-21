@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+from django.utils.timezone import now
 
 # Create your models here.
 class Band(models.Model):
@@ -81,10 +82,75 @@ class Championship(models.Model):
     player = models.OneToOneField(Player, on_delete=models.CASCADE, null=True, blank=True)
     image_url = models.CharField(max_length=120, null=True, blank=True)
     hike = models.FloatField()
-    updated_on = models.DateTimeField(auto_now=True) 
+    updated_on = models.DateTimeField() 
+
+    class Meta:
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
+
+_old_players = {}
+
+def cache_old_player(sender, instance, **kwargs):
+    if instance.pk:
+        try:
+            old = Championship.objects.get(pk=instance.pk)
+            _old_players[instance.pk] = old.player
+        except Championship.DoesNotExist:
+            _old_players[instance.pk] = None
+
+
+def create_championship_history(sender, instance, created, **kwargs):
+    old_player = _old_players.pop(instance.pk, None)
+    new_player = instance.player
+
+    if created:
+        # New championship with player
+        if new_player:
+            ChampionshipHistory.objects.create(
+                championship=instance,
+                player=new_player,
+                started_on=instance.updated_on,
+            )
+    else:
+        if old_player != new_player:
+            # End old player's reign
+            if old_player:
+                ChampionshipHistory.objects.filter(
+                    championship=instance,
+                    player=old_player,
+                    ended_on__isnull=True
+                ).update(ended_on=now())
+
+            # Start new player's reign
+            if new_player:
+                ChampionshipHistory.objects.create(
+                    championship=instance,
+                    player=new_player,
+                    started_on=instance.updated_on,
+                )
+
+pre_save.connect(cache_old_player, sender=Championship) 
+post_save.connect(create_championship_history, sender=Championship)
+
+    
+class ChampionshipHistory(models.Model):
+    championship = models.ForeignKey(Championship, on_delete=models.CASCADE, related_name="history")
+    player = models.ForeignKey("Player", on_delete=models.CASCADE)
+    started_on = models.DateTimeField()
+    ended_on = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-started_on"]
+
+    @property
+    def duration(self):
+        end_time = self.ended_on or now()
+        return end_time - self.started_on
+
+    def __str__(self):
+        return f"{self.championship.name} - {self.player} ({self.started_on.date()} to {self.ended_on.date() if self.ended_on else 'Present'})"
     
 class Rule(models.Model):
     name = models.CharField(max_length=200)

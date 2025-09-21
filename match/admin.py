@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import SingleMatch, Player
+from academy.models import ChampionshipHistory, Championship
 
 
 class PlayerAdmin(admin.ModelAdmin):
@@ -11,7 +12,11 @@ class SingleMatchAdmin(admin.ModelAdmin):
     list_filter = ("price_amount", "entry_amount")
     autocomplete_fields = ("player_1", "player_2", "winner")
 
+class ChampionshipAdmin(admin.ModelAdmin):
+    list_display = ("name", "player", "hike", "updated_on")
 
 # Register all models
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(SingleMatch, SingleMatchAdmin)
+admin.site.register(Championship, ChampionshipAdmin)
+admin.site.register(ChampionshipHistory)

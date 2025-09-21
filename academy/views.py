@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Band, Player, Championship, Rule, Auction
+from .models import Band, Player, Championship, Rule, Auction, ChampionshipHistory
 from .forms import BandForm, PlayerForm, ChampionshipForm, PlayerFilterForm, RuleForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -301,3 +301,10 @@ def auction_list(request):
     }
     return render(request, 'academy/auctions/auction_list.html', context)
     
+@login_required
+def championship_history_list(request):
+    championships = Championship.objects.prefetch_related("history__player")
+    context = {
+        'championships': championships
+    }
+    return render(request, 'academy/championship/championship_history.html', context)

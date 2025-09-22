@@ -114,6 +114,12 @@ def player_create(request):
     return render(request, 'form.html', {'form': form, "form_name": form_name, 'list_url': reverse('player-list'), })
 
 @login_required
+def permanently_delete(request, pk):
+    instance = get_object_or_404(Player.all_objects, pk=pk)
+    instance.delete()
+    return redirect('player-list')
+
+@login_required
 def player_update(request, pk):
     form_name = "Update Player"
     player = get_object_or_404(Player.all_objects, pk=pk)

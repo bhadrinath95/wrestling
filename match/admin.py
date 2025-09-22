@@ -4,7 +4,7 @@ from academy.models import ChampionshipHistory, Championship
 
 
 class PlayerAdmin(admin.ModelAdmin):
-    search_fields = ("name",)   # Required for autocomplete_fields to work
+    search_fields = ("name",)
 
 class SingleMatchAdmin(admin.ModelAdmin):
     list_display = ("name", "player_1", "player_2", "winner", "price_amount", "entry_amount")

@@ -9,7 +9,7 @@ class BandForm(forms.ModelForm):
 class PlayerForm(forms.ModelForm):
     class Meta:
         model = Player
-        fields = '__all__'
+        fields = ['name', 'gender', 'band', 'wins', 'matchesplayed', 'networth', 'image_url', 'spouse']
 
 class ChampionshipForm(forms.ModelForm):
     class Meta:

@@ -64,8 +64,11 @@ img {
 
                 </p>
 
-               {% if instance.band.name == "NXT Generations Band" and instance.is_active %}
+                {% if instance.band.name == "NXT Generations Band" and instance.is_active %}
                     <a href="{% url 'player-auction' instance.id %}" class="btn btn-info btn-sm">Auction</a>
+                {% endif %}
+                {% if not instance.is_active %}
+                    <a href="{% url 'player-recall' instance.id %}" class="btn btn-warning btn-sm">Recall</a>
                 {% endif %}
             </div>
         </div>

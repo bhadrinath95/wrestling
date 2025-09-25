@@ -331,3 +331,12 @@ def hall_of_frame(request):
         'players': players
     }
     return render(request, "academy/players/player_image.html", context)
+
+@login_required
+def player_recall(request, pk):
+    instance = get_object_or_404(Player.all_objects, pk=pk)
+    if instance:
+        instance.networth = 1000
+        instance.is_active = True
+        instance.save()
+    return render(request, 'academy/players/player_view.html', {'instance': instance})

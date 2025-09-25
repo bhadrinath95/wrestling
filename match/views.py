@@ -12,6 +12,7 @@ from academy.models import Band, Player
 from itertools import combinations
 from django.db.models import Count
 from django.utils.timezone import now
+from django.db import transaction
 
 
 # ---------- TOURNAMENT MATCH VIEWS ----------
@@ -112,8 +113,8 @@ def tournament_match_setup(request, pk):
 
 @login_required
 def tournament_create_league(request, pk):
-    form_name = "Create League"
     tournament = get_object_or_404(Tournament, pk=pk)
+    form_name = f"Create League for '{tournament.name}'"
     if request.method == 'POST':
         form = CreateLeagueForm(request.POST)
         if form.is_valid():
@@ -281,8 +282,9 @@ def singlematch_execute(request, pk):
 @login_required
 def singlematch_complete_all_matches(request):
     matches = SingleMatch.objects.filter(winner=None, tournament__is_main_tournament=False)
-    for match in matches:
-        generate_winner(match)
+    with transaction.atomic():
+        for match in matches:
+            generate_winner(match)
     return redirect('singlematch_list')
 
 @login_required

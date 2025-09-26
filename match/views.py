@@ -11,8 +11,10 @@ import datetime
 from academy.models import Band, Player
 from itertools import combinations
 from django.db.models import Count
-from django.utils.timezone import now
 from django.db import transaction
+from django.db.models import Q
+from datetime import timedelta
+from django.utils.timezone import now
 
 
 # ---------- TOURNAMENT MATCH VIEWS ----------
@@ -310,12 +312,19 @@ def create_notification(request, pk):
 
 @login_required
 def upcoming_main_tournament(request):
+    seven_days_ago = now().date() - timedelta(days=7)
+
     tournament = (
         Tournament.objects
-        .filter(is_main_tournament=True, is_completed=False, date__gte=now().date())
+        .filter(
+            is_main_tournament=True,
+            is_completed=False
+        )
+        .filter(date__gte=seven_days_ago)
         .order_by("date")
         .first()
     )
+    print(tournament)
     championship_freeze = False
     if tournament:
         days_until = (tournament.date - now().date()).days - 7

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Auto Tournament - {{ tournament.name }}{% endblock %}
+
+{% block style %}
+.btn-autoplay {
+    background-color: #6f42c1;
+    color: #fff;
+}
+.btn-autoplay:hover {
+    background-color: #59359c;
+    color: #fff;
+}
+{% endblock style %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4">Auto Tournament Setup</h2>
+        <p class="text-muted text-center">
+          Configure automatic matches for <strong>{{ tournament.name }}</strong>
+        </p>
+
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'tournament_detail' tournament.pk %}" class="btn btn-secondary">Back</a>
+            <button type="submit" class="btn btn-autoplay">Generate Matches</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

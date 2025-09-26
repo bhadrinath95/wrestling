@@ -19,7 +19,8 @@ def custom_404_view(request, exception):
 @login_required
 def band_list(request):
     bands = Band.objects.all().order_by('name')
-    return render(request, 'academy/bands/band_list.html', {'bands': bands})
+    total_active_players = Player.objects.count() 
+    return render(request, 'academy/bands/band_list.html', {'bands': bands, 'total_active_players': total_active_players})
 
 @login_required
 def band_create(request):

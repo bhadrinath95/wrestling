@@ -20,7 +20,7 @@ from django.utils.timezone import now
 # ---------- TOURNAMENT MATCH VIEWS ----------
 @login_required
 def tournament_list(request):
-    tournaments = Tournament.objects.all().order_by("is_completed", "is_main_tournament", "date", "-updated_at")
+    tournaments = Tournament.objects.all().order_by("is_completed", "is_main_tournament", "-date", "-updated_at")
     return render(request, 'matches/tournament/tournament_list.html', {'tournaments': tournaments})
 
 @login_required

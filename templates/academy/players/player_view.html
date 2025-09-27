@@ -69,6 +69,7 @@ img {
                 {% endif %}
                 {% if not instance.is_active %}
                     <a href="{% url 'player-recall' instance.id %}" class="btn btn-warning btn-sm">Recall</a>
+                     <a href="{% url 'player-permanently-delete' instance.id %}" class="btn btn-danger btn-sm">Permanently Delete</a>
                 {% endif %}
             </div>
         </div>

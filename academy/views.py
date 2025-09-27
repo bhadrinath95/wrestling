@@ -141,7 +141,7 @@ def player_auction(request, pk):
         message = "This player is not eligible for auction (not in NXT Generations Band)."
         return render(request, 'academy/players/player_view.html', {'instance': player, 'message': message})
 
-    min_networth = (2 / 3) * player.networth
+    min_networth = ((2 / 3) * player.networth) + player.networth
     eligible_bands = Band.objects.exclude(name="NXT Generations Band").filter(networth__gte=min_networth)
 
     if not eligible_bands.exists():

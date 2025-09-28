@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db import transaction
 import random
 from django.utils import timezone
-from match.models import Tournament
+from match.models import Tournament, SingleMatch
 
 
 def home_view(request):

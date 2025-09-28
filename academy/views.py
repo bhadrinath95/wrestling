@@ -8,6 +8,7 @@ from django.db import transaction
 import random
 from django.utils import timezone
 from match.models import Tournament, SingleMatch
+from django.db.models import Q
 
 
 def home_view(request):

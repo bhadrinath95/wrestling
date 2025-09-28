@@ -117,6 +117,9 @@ def player_create(request):
 @login_required
 def permanently_delete(request, pk):
     instance = get_object_or_404(Player.all_objects, pk=pk)
+    SingleMatch.objects.filter(
+            Q(player_1=instance) | Q(player_2=instance)
+        ).delete()
     instance.delete()
     return redirect('player-list')
 

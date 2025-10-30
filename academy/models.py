@@ -49,7 +49,7 @@ class Player(models.Model):
         ('Female', 'Female'),
     ]
 
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
     band = models.ForeignKey(Band, on_delete=models.CASCADE, related_name='player_band')
     wins = models.PositiveIntegerField(default=0)

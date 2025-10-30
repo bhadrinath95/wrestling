@@ -9,6 +9,7 @@ import random
 from django.utils import timezone
 from match.models import Tournament, SingleMatch
 from django.db.models import Q
+from django.db.models import Exists, OuterRef
 
 
 def home_view(request):
@@ -22,6 +23,25 @@ def band_list(request):
     bands = Band.objects.all().order_by('name')
     total_active_players = Player.objects.count() 
     return render(request, 'academy/bands/band_list.html', {'bands': bands, 'total_active_players': total_active_players})
+
+@login_required
+def band_add_networth(request):
+    if request.method == 'POST':
+        try:
+            amount = float(request.POST.get('amount', 0))
+            bands = Band.objects.all()
+
+            for band in bands:
+                band.networth += amount
+                band.save()
+
+            messages.success(request, f"Successfully added ₹{int(amount)} to all bands!")
+            return redirect('band-list')
+        except ValueError:
+            messages.error(request, "Invalid amount entered!")
+
+    return render(request, 'academy/bands/band_add_networth.html')
+
 
 @login_required
 def band_create(request):
@@ -62,6 +82,16 @@ def band_delete(request, pk):
         "partials/confirm_delete.html",
         {"instance": instance, "reverse_url": reverse("band-list"), "delete_view_name": "band-delete"},
     )
+
+@login_required
+def band_view(request, pk):
+    instance = get_object_or_404(Band, pk=pk)
+    players = Player.objects.filter(band=instance).annotate(
+        is_champion=Exists(
+            Championship.objects.filter(player=OuterRef('pk'))
+        )
+    ).order_by('-is_champion', '-gender', '-winningpercentage')
+    return render(request, 'academy/bands/band_view.html', {'instance': instance, 'players': players})
 
 def get_player_object_list(form):
     players = Player.objects.all().order_by("name")
@@ -145,11 +175,11 @@ def player_auction(request, pk):
         message = "This player is not eligible for auction (not in NXT Generations Band)."
         return render(request, 'academy/players/player_view.html', {'instance': player, 'message': message})
 
-    min_networth = ((2 / 3) * player.networth) + player.networth
+    min_networth = round(((2 / 3) * player.networth) + player.networth)
     eligible_bands = Band.objects.exclude(name="NXT Generations Band").filter(networth__gte=min_networth)
 
     if not eligible_bands.exists():
-        message = "No eligible band found for this auction."
+        message = f"No eligible band found for this auction — a minimum net worth of ₹{min_networth} is required."
         return render(request, 'academy/players/player_view.html', {'instance': player, "message": message})
 
     selected_band = random.choice(list(eligible_bands))
@@ -201,26 +231,29 @@ def player_delete(request, pk):
         },
     )
 
-
-@login_required
-def band_view(request, pk):
-    instance = get_object_or_404(Band, pk=pk)
-    return render(request, 'academy/view.html', {'instance': instance})
-
 @login_required
 def player_view(request, pk):
     instance = get_object_or_404(Player.all_objects, pk=pk)
     return render(request, 'academy/players/player_view.html', {'instance': instance})
 
 @login_required
-def championship_detail(request, pk):
-    instance = get_object_or_404(Championship, pk=pk)
-    return render(request, 'academy/championship/championship_detail.html', {'instance': instance})
-
-@login_required
-def championship_list(request):
+def championship_list(request, pk=None):
+    """
+    Combined view:
+    - Shows the full list of championships
+    - Optionally shows details of a selected championship (if pk is provided)
+    """
     championships = Championship.objects.all().order_by('name')
-    return render(request, 'academy/championship/championship_list.html', {'championships': championships})
+    instance = None
+
+    if pk:
+        instance = get_object_or_404(Championship, pk=pk)
+
+    context = {
+        'championships': championships,
+        'instance': instance
+    }
+    return render(request, 'academy/championship/championship_list.html', context)
 
 @login_required
 def championship_create(request):

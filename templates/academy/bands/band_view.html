@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block style %}
+img {
+    width: 25%;
+    height: 25%;
+    object-fit: cover; /* crop to fill container while maintaining aspect */
+    display: block;
+    margin: 0 auto; /* Center horizontally */
+}
+{% endblock %}
+{% if instance %}
+    {% block title %}{{ instance.name }}{% endblock %}
+    {% block content %}
+    <div class="row">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                {% if instance.image_url %}
+                        <div class="text-center mb-3">
+                            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ instance.image_url }}"
+                                alt="{{ instance.name }}">
+                        </div>
+                {% endif %}
+
+                <table class="table table-hover table-bordered">
+                    <tr>
+                        <th>Wins</th>
+                        <td>{{ instance.wins }}</td>
+                    </tr>
+                    <tr>
+                        <th>Matches Played</th>
+                        <td>{{ instance.matchesplayed }}</td>
+                    </tr>
+                    <tr>
+                        <th>Winning %</th>
+                        <td>{{ instance.winningpercentage|floatformat:2 }}%</td>
+                    </tr>
+                    <tr>
+                        <th>Networth</th>
+                        <td>₹ {{ instance.networth|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Men Player Count</th>
+                        <td>{{ instance.men_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Women Player Count</th>
+                        <td>{{ instance.women_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total Player Count</th>
+                        <td>{{ instance.player_count }}</td>
+                    </tr>
+                </table>
+                
+            </div>
+        </div>
+    </div> <br />
+        
+    {% if players %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        {% for player in players %}
+            <div class="col">
+            <div class="card h-100 shadow-sm">
+
+                <!-- Square Image -->
+                <div class="ratio ratio-1x1 bg-white">
+                <a href="{% url 'player-view' player.id %}">
+                    <img
+                    src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ player.image_url }}"
+                    alt="{{ player.name }}"
+                    class="w-100 h-100"
+                    style="object-fit: contain; object-position: center; background-color: white;"
+                    >
+                </a>
+                </div>
+
+                <div class="card-body text-center">
+                <h6 class="card-title mb-1">{{ player.name }}</h6>
+                <p class="card-text text-muted small mb-0">
+                    {% if player.championship %}
+                    <span class="badge bg-warning text-dark mt-1">
+                        {{ player.championship.name }}
+                    </span><br />
+                    {% endif %}
+                    {% if not player.is_active %}
+                    <span class="badge bg-danger text-dark mt-1">
+                        Not Active
+                    </span><br />
+                    {% endif %}
+                    {% if player.band %}{{ player.band }}{% endif %}<br />
+                    <b>Win %:</b> {{ player.winningpercentage|floatformat:2 }}%<br />
+                    <b>Networth:</b> ₹ {{ player.networth|floatformat:2 }}<br />
+                </p>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-4" role="alert">
+        No players found.
+        </div>
+    {% endif %}
+
+    {% endblock %}
+{% endif %}

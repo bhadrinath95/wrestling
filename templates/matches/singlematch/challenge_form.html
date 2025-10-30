@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Challenge for Championship</h2>
+    <div class="row align-items-center">
+        <!-- Left column: Challenger details -->
+        <div class="col-md-8">
+            <p><strong>Challenger:</strong> {{ challenger.name }}</p>
+            <p><strong>Gender:</strong> {{ challenger.gender }}</p>
+            <p><strong>Band:</strong> {{ challenger.band.name }}</p>
+            <p><strong>Networth:</strong> ₹ {{ challenger.networth|floatformat:2 }}</p>
+        </div>
+
+        <!-- Right column: Image -->
+        <div class="col-md-4 text-center">
+            <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ challenger.image_url }}"
+                 alt="{{ challenger.name }}"
+                 class="img-fluid rounded shadow-sm"
+                 style="max-height: 120px; object-fit: cover;">
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Create Match</button>
+    </form>
+</div>
+{% endblock %}

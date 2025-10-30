@@ -3,13 +3,13 @@
 {% block style %}
 .img-square {
     width: 100%;
-    max-width: 200px;  
-    height: 200px;  
-    background: white;  
+    max-width: 200px;
+    height: 200px;
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;  
+    overflow: hidden;
     border: 1px solid black;
     margin: auto;
 }
@@ -19,7 +19,7 @@
     object-fit: contain;
 }
 .tournament-heading {
-    color: #b22222; 
+    color: #b22222;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -40,143 +40,23 @@
 </div>
 
 <div class="row mb-4">
-    <div class="col-12 col-md-6 mb-3">
-        <div class="img-square">
-            {% if tournament.image_url %}
-                <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ tournament.image_url }}" 
-                     alt="{{ tournament.name }}">
-            {% else %}
-                <img alt="{{ tournament.name }}">
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="col-12 col-md-6 mb-3 d-flex flex-column justify-content-center">
-        <table class="table table-borderless">
-            <tr>
-                <th>Tournament Date:</th>
-                <td>{{ tournament.date|date:"F j, Y" }}</td>
-            </tr>
-            <tr>
-                <th>Time left:</th>
-                <td>{{ tournament.date|timeuntil }}</td>
-            </tr>
-            <tr>
-                <th>Championship freeze:</th>
-                {% if championship_freeze %}
-                    <td><p style="color:red;">Active</p></td>
-                {% else %}
-                    <td>{{ days_until }} days to go</td>
-                {% endif %}
-            </tr>
-        </table>
+    <div class="col-md-6 mx-auto">
+        <label for="tournament-select" class="form-label fw-bold">View Main Tournament:</label>
+        <select id="tournament-select" class="form-select"
+            hx-get="{% url 'main_event' %}"
+            hx-target="#tournament-details"
+            hx-swap="innerHTML"
+            name="tournament_id">
+            <option value="">-- Select Tournament --</option>
+            {% for t in completed_tournaments %}
+                <option value="{{ t.id }}">{{ t.name }} ({{ t.date|date:"F j, Y" }})</option>
+            {% endfor %}
+        </select>
     </div>
 </div>
 
-<div class="row">
-    {% for match in matches %}
-    <div class="col-12 col-md-6 card-match">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white text-center">
-                <h5>{{ match.name }}</h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <!-- Player 1 -->
-                    <div class="col-6">
-                        <div class="img-square mb-2">
-                            {% if match.player_1.image_url %}
-                                <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_1.image_url }}" 
-                                     alt="{{ match.player_1.name }}">
-                            {% else %}
-                                <img alt="{{ match.player_1.name }}">
-                            {% endif %}
-                        </div>
-                        <h6>
-                            <a href="{% url 'player-view' match.player_1.id %}">{{ match.player_1.name }}</a><br />
-                            {% if match.player_1.championship.name %}
-                                <span class="badge bg-warning text-dark mt-1">{{ match.player_1.championship.name }}</span><br />
-                            {% endif %}
-                            {% if not match.player_1.is_active %}
-                                <span class="badge bg-danger text-dark mt-1">Not Active</span>
-                            {% endif %}
-                        </h6>
-                        <ul class="list-unstyled">
-                            <li><strong>Band:</strong> {{ match.player_1.band }}%</li>
-                            <li><strong>Win %:</strong> {{ match.player_1.winningpercentage|floatformat:2 }}%</li>
-                            <li><strong>Net Worth:</strong> ₹ {{ match.player_1.networth|floatformat:2 }}</li>
-                        </ul>
-                    </div>
-
-                    <!-- Player 2 -->
-                    <div class="col-6">
-                        <div class="img-square mb-2">
-                            {% if match.player_2.image_url %}
-                                <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.player_2.image_url }}" 
-                                     alt="{{ match.player_2.name }}">
-                            {% else %}
-                                <img alt="{{ match.player_2.name }}">
-                            {% endif %}
-                        </div>
-                        <h6>
-                            <a href="{% url 'player-view' match.player_2.id %}">{{ match.player_2.name }}</a><br />
-                            {% if match.player_2.championship.name %}
-                                <span class="badge bg-warning text-dark mt-1">{{ match.player_2.championship.name }}</span><br />
-                            {% endif %}
-                            {% if not match.player_2.is_active %}
-                                <span class="badge bg-danger text-dark mt-1">Not Active</span>
-                            {% endif %}
-                        </h6>
-                        <ul class="list-unstyled">
-                            <li><strong>Band:</strong> {{ match.player_2.band }}%</li>
-                            <li><strong>Win %:</strong> {{ match.player_2.winningpercentage|floatformat:2 }}%</li>
-                            <li><strong>Net Worth:</strong> ₹ {{ match.player_2.networth|floatformat:2 }}</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Winner Info -->
-                <div class="row mt-3">
-                    <div class="col-12 text-center">
-                        <h6>Winner:</h6>
-                        {% if match.winner %}
-                            <div class="img-square mb-2">
-                                <img src="https://raw.githubusercontent.com/tenctech10c/BWEImages/main/{{ match.winner.image_url }}" 
-                                     alt="{{ match.winner.name }}">
-                            </div>
-                            <p>{{ match.winner.name }}</p>
-                        {% else %}
-                            <p>Not yet declared.</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Match Price Info -->
-                <div class="row mt-2">
-                    <div class="col-12">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Price Amount</th>
-                                <td>₹ {{ match.price_amount|floatformat:2 }}</td>
-                            </tr>
-                            <tr>
-                                <th>Entry Amount</th>
-                                <td>₹ {{ match.entry_amount|floatformat:2 }}</td>
-                            </tr>
-                            <tr>
-                                <th>Date</th>
-                                <td>{{ match.date|date:"F j, Y" }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% empty %}
-    <div class="col-12 text-center">
-        <p>No matches available for this tournament.</p>
-    </div>
-    {% endfor %}
+<div id="tournament-details">
+    {% include "matches/tournament/partials/tournament_details_partial.html" %}
 </div>
+
 {% endblock %}

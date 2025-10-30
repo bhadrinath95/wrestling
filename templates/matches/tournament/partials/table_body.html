@@ -8,7 +8,7 @@
 
             {% if not tournament.is_main_tournament %}
                 <a href="{% url 'tournament_update' tournament.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                <a href="{% url 'tournament_create_league' tournament.pk %}" class="btn btn-secondary btn-sm">Create League</a>
+                <a href="{% url 'tournament_create_league' tournament.pk %}" class="btn btn-secondary btn-sm">Auto Play League</a>
                 <a href="{% url 'tournament_match_setup' tournament.pk %}" class="btn btn-info btn-sm">Custom Setup</a>
             {% endif %}
 

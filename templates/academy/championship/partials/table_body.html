@@ -6,14 +6,14 @@
       <td>{{ championship.updated_on|timesince }}</td>
       <td>{{ championship.hike }}</td>
       <td>
-        <a href="{% url 'championship-view' championship.id %}" class="btn btn-info btn-sm">View</a>
-        <a href="{% url 'championship-update' championship.id %}" class="btn btn-warning btn-sm">Edit</a>
+        <a href="{% url 'championship-view' championship.id %}" class="btn btn-info btn-sm">View</a></br>
+        <a href="{% url 'championship-update' championship.id %}" class="btn btn-warning btn-sm">Edit</a></br>
         <a class="btn btn-danger btn-sm"
             hx-get="{% url 'championship-delete' championship.id %}" 
             hx-target="#dialog" 
             hx-swap="innerHTML">
         Delete
-        </a>
+        </a></br>
       </td>
     </tr>
 {% endfor %}

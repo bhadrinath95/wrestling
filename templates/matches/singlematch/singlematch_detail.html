@@ -4,8 +4,14 @@ img {
     width: 50%;
     height: 50%;
     object-fit: contain;
-    object-position: center; 
+    object-position: center;
     display: block;
+    margin: 0 auto;
+    border: 3px solid #dee2e6;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 {% endblock %}
 {% block content %}
@@ -28,7 +34,7 @@ img {
                 <a href="{% url 'player-view' match.player_1.id %}">{{ match.player_1.name }}</a>{% if match.player_1.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_1.championship.name }}</span>{% endif %} {% if not match.player_1.is_active %} <span class="badge bg-danger text-dark mt-1">Not Active</span>{% endif %}
             </h4>
             <ul>
-                <li><strong>Band: </strong>{{ match.player_1.band }} %</li>
+                <li><strong>Band: </strong>{{ match.player_1.band }}</li>
                 <li><strong>Win %: </strong>{{ match.player_1.winningpercentage|floatformat:2 }} %</li>
                 <li><strong>Net Worth: </strong>₹ {{ match.player_1.networth|floatformat:2 }}</li>
             </ul>
@@ -45,9 +51,9 @@ img {
             <h4>
                 <a href="{% url 'player-view' match.player_2.id %}">{{ match.player_2.name }}</a>{% if match.player_2.championship.name %} <span class="badge bg-warning text-dark mt-1">{{ match.player_2.championship.name }}</span>{% endif %} {% if not match.player_2.is_active %} <span class="badge bg-danger text-dark mt-1">Not Active</span>{% endif %}
             </h4>
-            
+
             <ul>
-                <li><strong>Band: </strong>{{ match.player_2.band }} %</li>
+                <li><strong>Band: </strong>{{ match.player_2.band }}</li>
                 <li><strong>Win %: </strong>{{ match.player_2.winningpercentage|floatformat:2 }} %</li>
                 <li><strong>Net Worth: </strong>₹ {{ match.player_2.networth|floatformat:2 }}</li>
             </ul>

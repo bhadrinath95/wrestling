@@ -12,6 +12,10 @@
             {% for player in top_players %}
             <li>
                 {{ player.band.emoji }} {{ player.name }} — Wins: {{ player.wins_count }}
+                    <a href="{% url 'challenge_for_championship' player.id %}"
+                    class="btn btn-sm btn-danger ms-3">
+                    Challenge for Championship
+                    </a>
             </li>
             {% endfor %}
         </ul>

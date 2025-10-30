@@ -116,3 +116,30 @@ class CreateMatchSetupForm(forms.Form):
         self.fields["players"].label_from_instance = lambda player: (
             f"""{player.band.emoji or ''} {player.name}{' ©️' if player.id in champions else ''} | {'M' if player.gender == "Male" else 'F'} | {round(player.winningpercentage, 2)}%"""
         ).strip()
+
+class ChampionshipChoiceField(forms.ModelChoiceField):
+    """Custom field to display championship name + holder."""
+    def label_from_instance(self, obj):
+        holder_name = obj.player.name if obj.player else "No current holder"
+        return f"{obj.name} — {holder_name}"
+
+class ChampionshipChallengeForm(forms.ModelForm):
+    championship = ChampionshipChoiceField(
+        queryset=Championship.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    tournament = forms.ModelChoiceField(
+        queryset=Tournament.objects.filter(is_completed=False).order_by("date", "-updated_at"),
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+
+    class Meta:
+        model = SingleMatch
+        fields = ['name', 'date', 'championship', 'tournament', 'price_amount', 'entry_amount']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'price_amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'entry_amount': forms.NumberInput(attrs={'class': 'form-control'}),
+        }

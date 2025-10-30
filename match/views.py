@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import SingleMatch, Tournament
-from .forms import SingleMatchForm, NotificationForm, TournamentForm, CreateLeagueForm, CreateMatchSetupForm
+from .forms import SingleMatchForm, NotificationForm, TournamentForm, CreateLeagueForm, CreateMatchSetupForm, ChampionshipChallengeForm
 from django.urls import reverse_lazy
 from .utils import generate_winner, get_paginated_object_list
 from django.urls import reverse
@@ -32,13 +32,14 @@ def tournament_complete(request, pk):
 
 @login_required
 def tournament_detail(request, pk):
+    
     tournament = get_object_or_404(Tournament, pk=pk)
     matches = SingleMatch.objects.filter(tournament=tournament).order_by("-updated_at")
 
     # Count wins per player in this tournament
     player_wins = (
         Player.objects
-        .filter(single_match_winner__tournament=tournament)   # winner FK -> Player
+        .filter(single_match_winner__tournament=tournament) 
         .annotate(wins_count=Count("single_match_winner"))
         .order_by("-wins_count")
     )
@@ -87,18 +88,19 @@ def tournament_match_setup(request, pk):
             match_date = datetime.date.today()
             count = 1
 
-            for p1, p2 in combinations(players, 2):
-                SingleMatch.objects.create(
-                    name=f"{match_name} Match {count}",
-                    date=match_date,
-                    tournament=tournament,
-                    player_1=p1,
-                    player_2=p2,
-                    winner=None,
-                    price_amount=price_amount,
-                    entry_amount=entry_amount,
-                )
-                count += 1
+            with transaction.atomic():
+                for p1, p2 in combinations(players, 2):
+                    SingleMatch.objects.create(
+                        name=f"{match_name} Match {count}",
+                        date=match_date,
+                        tournament=tournament,
+                        player_1=p1,
+                        player_2=p2,
+                        winner=None,
+                        price_amount=price_amount,
+                        entry_amount=entry_amount,
+                    )
+                    count += 1
 
             return redirect("tournament_list")
 
@@ -117,10 +119,25 @@ def tournament_match_setup(request, pk):
 def tournament_create_league(request, pk):
     tournament = get_object_or_404(Tournament, pk=pk)
     form_name = f"Create League for '{tournament.name}'"
+
+    def create_match(player1, player2, name, tournament, price_amount, entry_amount, match_date):
+        """Helper to create match and generate winner."""
+        match = SingleMatch.objects.create(
+            name=name,
+            date=match_date,
+            tournament=tournament,
+            player_1=player1,
+            player_2=player2,
+            winner=None,
+            price_amount=price_amount,
+            entry_amount=entry_amount
+        )
+        generate_winner(match)
+        return match
+
     if request.method == 'POST':
         form = CreateLeagueForm(request.POST)
         if form.is_valid():
-
             gender = form.cleaned_data.get("gender")
             bands = form.cleaned_data.get("bands")
             price_amount = form.cleaned_data.get("price_amount") or 0
@@ -129,33 +146,62 @@ def tournament_create_league(request, pk):
             match_date = datetime.date.today()
             count = 1
 
-            for band in bands:
-                if gender == "Both":
+            with transaction.atomic():
+                for band in bands:
                     players = Player.objects.filter(band=band)
-                else:
-                    players = Player.objects.filter(band=band, gender=gender)
-                for p1, p2 in combinations(players, 2):
-                    SingleMatch.objects.create(
-                        name=f"{band.name} Stage Match: {count}",
-                        date=match_date,
-                        tournament=tournament,
-                        player_1=p1,
-                        player_2=p2,
-                        winner=None,
-                        price_amount=price_amount,
-                        entry_amount=entry_amount
-                    )
-                    count += 1
+                    if gender != "Both":
+                        players = players.filter(gender=gender)
+
+                    for p1, p2 in combinations(players, 2):
+                        create_match(
+                            player1=p1,
+                            player2=p2,
+                            name=f"{band.name} Stage Match: {count}",
+                            tournament=tournament,
+                            price_amount=price_amount,
+                            entry_amount=entry_amount,
+                            match_date=match_date
+                        )
+                        count += 1
+
+            while True:
+                player_wins = (
+                    Player.objects
+                    .filter(single_match_winner__tournament=tournament)
+                    .annotate(wins_count=Count("single_match_winner"))
+                    .order_by("-wins_count")
+                )
+
+                max_wins = player_wins.first().wins_count
+                top_players = list(player_wins.filter(wins_count=max_wins))
+
+                if len(top_players) == 1:
+                    break
+                
+                with transaction.atomic():
+                    for p1, p2 in combinations(top_players, 2):
+                        create_match(
+                            player1=p1,
+                            player2=p2,
+                            name=f"Top Round Match {count}: {p1.name} vs {p2.name}",
+                            tournament=tournament,
+                            price_amount=price_amount,
+                            entry_amount=entry_amount,
+                            match_date=match_date
+                        )
+                        count += 1
 
             return redirect('tournament_list')
+
     else:
         form = CreateLeagueForm()
+
     return render(
         request,
         'form.html',
         {
             'form': form,
-            "form_name": form_name,
+            'form_name': form_name,
             'list_url': reverse('tournament_list'),
         }
     )
@@ -314,28 +360,83 @@ def create_notification(request, pk):
 def upcoming_main_tournament(request):
     seven_days_ago = now().date() - timedelta(days=7)
 
+    # Default tournament: upcoming
     tournament = (
         Tournament.objects
-        .filter(
-            is_main_tournament=True,
-            is_completed=False
-        )
+        .filter(is_main_tournament=True, is_completed=False)
         .filter(date__gte=seven_days_ago)
         .order_by("date")
         .first()
     )
-    print(tournament)
+
     championship_freeze = False
+    days_until = None
+
     if tournament:
         days_until = (tournament.date - now().date()).days - 7
         if days_until < 0:
             championship_freeze = True
 
     matches = SingleMatch.objects.filter(tournament=tournament)
+
+    # Dropdown list of all completed main tournaments
+    completed_tournaments = Tournament.objects.filter(
+        is_main_tournament=True
+    ).order_by("-date")
+
+    # If this is an HTMX request (for a selected tournament)
+    if request.headers.get("HX-Request"):
+        tournament_id = request.GET.get("tournament_id")
+        tournament = get_object_or_404(Tournament, pk=tournament_id)
+        matches = SingleMatch.objects.filter(tournament=tournament)
+        return render(
+            request,
+            "matches/tournament/partials/tournament_details_partial.html",
+            {
+                "tournament": tournament,
+                "matches": matches,
+                "championship_freeze": championship_freeze,
+                "days_until": days_until,
+            },
+        )
+
     context = {
         "tournament": tournament,
         "matches": matches,
         "championship_freeze": championship_freeze,
-        "days_until": days_until
+        "days_until": days_until,
+        "completed_tournaments": completed_tournaments,
     }
+
     return render(request, "matches/tournament/upcoming_main.html", context)
+
+@login_required
+def challenge_for_championship(request, player_id):
+    challenger = get_object_or_404(Player, pk=player_id)  # Top player in this tournament
+
+    if request.method == "POST":
+        form = ChampionshipChallengeForm(request.POST)
+        if form.is_valid():
+            championship = form.cleaned_data['championship']
+            match = SingleMatch.objects.create(
+                name=form.cleaned_data['name'],
+                date=form.cleaned_data['date'],
+                tournament=form.cleaned_data['tournament'],
+                player_1=championship.player,
+                player_2=challenger,
+                winner=None,
+                price_amount=form.cleaned_data['price_amount'],
+                entry_amount=form.cleaned_data['entry_amount']
+            )
+            return redirect("singlematch_detail", pk=match.pk)
+    else:
+        form = ChampionshipChallengeForm()
+
+    return render(
+        request,
+        "matches/singlematch/challenge_form.html",
+        {
+            "form": form,
+            "challenger": challenger
+        },
+    )

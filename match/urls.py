@@ -12,6 +12,7 @@ urlpatterns = [
     path('tournament/<int:pk>/delete/', views.tournament_delete, name='tournament_delete'),
     path('tournament/main_event', views.upcoming_main_tournament, name='main_event'),
     path('tournament/<int:pk>/complete', views.tournament_complete, name='tournament_complete'),
+    path("tournament/challenge/<int:player_id>/", views.challenge_for_championship, name="challenge_for_championship"),
 
     path('single/', views.singlematch_list, name='singlematch_list'),
     path('single/<int:pk>/', views.singlematch_detail, name='singlematch_detail'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path('single/<int:pk>/delete/', views.singlematch_delete, name='singlematch_delete'),
     path('single/<int:pk>/run/', views.singlematch_execute, name='singlematch_run'),
     path('single/<int:pk>/create_notification/', views.create_notification, name='create_notification'),
+    
 ]

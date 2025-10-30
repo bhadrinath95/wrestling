@@ -8,6 +8,7 @@ urlpatterns = [
     path('bands/<int:pk>/view/', views.band_view, name='band-view'),
     path('bands/<int:pk>/edit/', views.band_update, name='band-update'),
     path('bands/<int:pk>/delete/', views.band_delete, name='band-delete'),
+    path('bands/add_networth', views.band_add_networth, name='band-add_networth'),
 
     # Players
     path('players/', views.player_list, name='player-list'),
@@ -24,7 +25,7 @@ urlpatterns = [
     path('championship/', views.championship_list, name='championship-list'),
     path('championship_history/', views.championship_history_list, name='championship-history'),
     path('championship/create/', views.championship_create, name='championship-create'),
-    path('championship/<int:pk>/view/', views.championship_detail, name='championship-view'),
+    path('championship/<int:pk>/view/', views.championship_list, name='championship-view'),
     path('championship/<int:pk>/edit/', views.championship_update, name='championship-update'),
     path('championship/<int:pk>/delete/', views.championship_delete, name='championship-delete'),
 

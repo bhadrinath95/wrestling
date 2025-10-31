@@ -327,7 +327,7 @@ def singlematch_delete(request, pk):
 def singlematch_execute(request, pk):
     match = get_object_or_404(SingleMatch, pk=pk)
     generate_winner(match)
-    return redirect('singlematch_list')
+    return redirect('singlematch_detail', pk=match.pk)
 
 @login_required
 def singlematch_complete_all_matches(request):

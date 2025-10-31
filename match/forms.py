@@ -7,7 +7,7 @@ from academy.models import Player, Championship
 class SingleMatchForm(forms.ModelForm):
     class Meta:
         model = SingleMatch
-        fields = ['name', 'date', 'tournament', 'player_1', 'player_2', 'price_amount', 'entry_amount']
+        fields = ['name', 'date', 'tournament', 'player_1', 'player_2', 'price_amount', 'entry_amount', 'is_championship_match']
         widgets = {
             'date': forms.DateInput(attrs={
                 'type': 'date', 
@@ -103,6 +103,13 @@ class CreateMatchSetupForm(forms.Form):
         decimal_places=2,
         max_digits=10,
         initial=0
+    )
+
+    is_championship_match = forms.BooleanField(
+        label="Is this a Championship Match?",
+        required=False,
+        initial=False,
+        help_text="Tick this if the match determines a championship winner."
     )
 
     def __init__(self, *args, **kwargs):

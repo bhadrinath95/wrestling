@@ -3,6 +3,8 @@ from academy.models import Player
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db.models import Q
+from academy.models import Championship
+from django.db.models.signals import pre_save, post_save
 
 # Create your models here.
 class Tournament(models.Model):
@@ -48,11 +50,28 @@ class SingleMatch(models.Model):
     price_amount = models.FloatField(default=0)
     entry_amount = models.FloatField(default=0)
     updated_at = models.DateTimeField(auto_now=True) 
+    is_championship_match = models.BooleanField(default=False)
 
     objects = SingleMatchManager()
 
     def __str__(self):
         return f"{self.name} - {self.player_1} vs {self.player_2}"
+    
+def update_championship_on_winner(sender, instance, created, **kwargs):
+    if not instance.is_championship_match or not instance.winner:
+        return 
+    championship = Championship.objects.filter(
+        player__in=[instance.player_1, instance.player_2]
+    )
+    if not championship or len(championship) == 2:
+        return
+    championship = championship.first()
+    if championship.player == instance.winner:
+        return
+    championship.player = instance.winner
+    championship.save()
+
+post_save.connect(update_championship_on_winner, sender=SingleMatch)
     
 class Notification(models.Model):
     match = models.ForeignKey(SingleMatch, on_delete=models.CASCADE, related_name="match_notification")

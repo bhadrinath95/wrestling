@@ -84,6 +84,7 @@ def tournament_match_setup(request, pk):
             price_amount = form.cleaned_data.get("price_amount") or 0
             entry_amount = form.cleaned_data.get("entry_amount") or 0
             match_name = form.cleaned_data.get("match_name")
+            is_championship_match = form.cleaned_data.get("is_championship_match")
 
             match_date = datetime.date.today()
             count = 1
@@ -99,6 +100,7 @@ def tournament_match_setup(request, pk):
                         winner=None,
                         price_amount=price_amount,
                         entry_amount=entry_amount,
+                        is_championship_match=is_championship_match
                     )
                     count += 1
 
@@ -426,7 +428,8 @@ def challenge_for_championship(request, player_id):
                 player_2=challenger,
                 winner=None,
                 price_amount=form.cleaned_data['price_amount'],
-                entry_amount=form.cleaned_data['entry_amount']
+                entry_amount=form.cleaned_data['entry_amount'],
+                is_championship_match=True
             )
             return redirect("singlematch_detail", pk=match.pk)
     else:

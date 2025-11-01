@@ -1,19 +1,36 @@
 {% extends "base.html" %}
 {% block style %}
-    .player-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 10px;
-    }
-    .player-item {
-      background: #f8f9fa;
-      padding: 5px 10px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-    }
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+}
+.player-item {
+  background: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
 {% endblock style %}
+
 {% block content %}
   <h2>{{ form_name }}</h2>
+
+  <!-- 🔍 Player Filter -->
+  <form method="get" class="mb-4">
+    <div class="card p-3 mb-3">
+      <h5>Filter Players</h5>
+      <div class="row">
+        <div class="col-md-3">{{ filter_form.bands.label_tag }} {{ filter_form.bands }}</div>
+        <div class="col-md-2">{{ filter_form.gender.label_tag }} {{ filter_form.gender }}</div>
+        <div class="col-md-2">{{ filter_form.is_champion.label_tag }} {{ filter_form.is_champion }}</div>
+        <div class="col-md-2">{{ filter_form.include_champion.label_tag }} {{ filter_form.include_champion }}</div>
+        <div class="col-md-3">{{ filter_form.sort_by.label_tag }} {{ filter_form.sort_by }}</div>
+      </div>
+    </div>
+  </form>
+
+  <!-- 🏆 Match Setup -->
   <form method="post">
     {% csrf_token %}
     <div class="mb-3">

@@ -73,6 +73,67 @@ class NotificationForm(forms.ModelForm):
             }),
         }
 
+class PlayerSelectionFilterForm(forms.Form):
+    bands = forms.ModelMultipleChoiceField(
+        queryset=Band.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={"onchange": "this.form.submit();"})
+    )
+    gender = forms.ChoiceField(
+        choices=[("", "All Genders")] + list(Player.GENDER_CHOICES),
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "this.form.submit();"})
+    )
+    is_champion = forms.BooleanField(
+        label="Only Champions",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"onchange": "this.form.submit();"})
+    )
+    include_champion = forms.BooleanField(
+        label="Include Champions",
+        required=False,
+        widget=forms.CheckboxInput(attrs={"onchange": "this.form.submit();"})
+    )
+    sort_by = forms.ChoiceField(
+        choices=[
+            ("", "Default (Win % High → Low)"),
+            ("name", "Name (A-Z)"),
+            ("-name", "Name (Z-A)"),
+            ("wins", "Wins (Low → High)"),
+            ("-wins", "Wins (High → Low)"),
+            ("winningpercentage", "Win % (Low → High)"),
+            ("-winningpercentage", "Win % (High → Low)"),
+            ("networth", "Networth (Low → High)"),
+            ("-networth", "Networth (High → Low)"),
+        ],
+        required=False,
+        widget=forms.Select(attrs={"class": "form-select", "onchange": "this.form.submit();"})
+    )
+
+    def filter_queryset(self, queryset):
+        bands = self.cleaned_data.get("bands")
+        gender = self.cleaned_data.get("gender")
+        is_champion = self.cleaned_data.get("is_champion")
+        include_champion = self.cleaned_data.get("include_champion")
+        sort_by = self.cleaned_data.get("sort_by")
+
+        if bands and bands.exists():
+            queryset = queryset.filter(band__in=bands)
+        if gender:
+            queryset = queryset.filter(gender=gender)
+        if is_champion:
+            champion_ids = Championship.objects.values_list("player_id", flat=True)
+            queryset = queryset.filter(id__in=champion_ids)
+        if not include_champion:
+            champion_ids = Championship.objects.values_list("player_id", flat=True)
+            queryset = queryset.exclude(id__in=champion_ids)
+
+        if sort_by:
+            queryset = queryset.order_by(sort_by)
+        else:
+            queryset = queryset.order_by("-winningpercentage")
+        return queryset
+    
 class CreateMatchSetupForm(forms.Form):
     match_name = forms.CharField(
         label="Match Name Prefix",
@@ -87,21 +148,17 @@ class CreateMatchSetupForm(forms.Form):
         label="Select Players"
     )
 
-    price_amount = forms.DecimalField(
+    price_amount = forms.FloatField(
         label="Prize Amount",
         required=False,
         min_value=0,
-        decimal_places=2,
-        max_digits=10,
         initial=0
     )
 
-    entry_amount = forms.DecimalField(
+    entry_amount = forms.FloatField(
         label="Entry Amount",
         required=False,
         min_value=0,
-        decimal_places=2,
-        max_digits=10,
         initial=0
     )
 

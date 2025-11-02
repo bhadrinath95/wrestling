@@ -185,16 +185,31 @@ def tournament_create_league(request, pk):
             count = 1
 
             with transaction.atomic():
-                for band in bands:
-                    players = Player.objects.filter(band=band)
+                if bands:
+                    for band in bands:
+                        players = Player.objects.filter(band=band)
+                        if gender != "Both":
+                            players = players.filter(gender=gender)
+                        for p1, p2 in combinations(players, 2):
+                            create_match(
+                                player1=p1,
+                                player2=p2,
+                                name=f"{band.name} Stage Match: {count}",
+                                tournament=tournament,
+                                price_amount=price_amount,
+                                entry_amount=entry_amount,
+                                match_date=match_date
+                            )
+                            count += 1
+                else:
+                    players = Player.objects.all()
                     if gender != "Both":
                         players = players.filter(gender=gender)
-
                     for p1, p2 in combinations(players, 2):
                         create_match(
                             player1=p1,
                             player2=p2,
-                            name=f"{band.name} Stage Match: {count}",
+                            name=f"League Stage Match: {count}",
                             tournament=tournament,
                             price_amount=price_amount,
                             entry_amount=entry_amount,
